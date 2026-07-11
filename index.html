@@ -542,6 +542,7 @@ html.night .type-btn.is-active { color: #0B1024; }
       <div class="field-label" style="margin-bottom:8px;">Code personnel</div>
       <input class="login-code" id="code" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" aria-label="Code personnel">
       <button class="btn btn--primary login-btn" type="submit">Ouvrir mon carnet</button>
+      <div id="loginErr" role="alert" style="display:none;margin-top:12px;text-align:center;font-size:13px;font-weight:700;color:var(--danger);">Code incorrect — accès refusé.</div>
       <div class="login-date" data-today-lieu>jeudi 9 juillet 2026 · Lyon</div>
     </form>
   </div>
@@ -1567,9 +1568,20 @@ html.night .type-btn.is-active { color: #0B1024; }
   window.addEventListener('hashchange', route);
   var app=document.getElementById('app'), gate=document.getElementById('loginGate');
   function showApp(){ gate.style.display='none'; app.style.display='flex'; if(!location.hash) location.hash='#journee'; route(); }
-  var logged=false; try{ logged=localStorage.getItem('carnet.ouvert')==='1'; }catch(e){}
-  if(logged){ showApp(); } else { gate.style.display='flex'; app.style.display='none'; }
-  document.getElementById('loginForm').addEventListener('submit', function(e){ e.preventDefault(); try{localStorage.setItem('carnet.ouvert','1');}catch(err){} showApp(); });
+  function unlocked(){ try{ return sessionStorage.getItem('carnet.unlocked')==='1'; }catch(e){ return false; } }
+  if(unlocked()){ showApp(); } else { gate.style.display='flex'; app.style.display='none'; var c=document.getElementById('code'); if(c) setTimeout(function(){c.focus();},60); }
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var code=((document.getElementById('code')||{}).value||'').trim();
+    if(code===atob('MTEwNDk5')){
+      try{sessionStorage.setItem('carnet.unlocked','1');}catch(err){}
+      var ok=document.getElementById('loginErr'); if(ok) ok.style.display='none';
+      showApp();
+    }else{
+      var er=document.getElementById('loginErr'); if(er) er.style.display='block';
+      var inp=document.getElementById('code'); if(inp){ inp.value=''; inp.focus(); }
+    }
+  });
 })();
 </script>
 </body>
