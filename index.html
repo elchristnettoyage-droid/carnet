@@ -540,7 +540,7 @@ html.night .type-btn.is-active { color: #0B1024; }
       <div class="field-label" style="margin-bottom:8px;">Code personnel</div>
       <input class="login-code" id="code" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" aria-label="Code personnel">
       <button class="btn btn--primary login-btn" type="submit">Ouvrir mon carnet</button>
-      <div class="login-date">jeudi 9 juillet 2026 · Lyon</div>
+      <div class="login-date" data-today-lieu>jeudi 9 juillet 2026 · Lyon</div>
     </form>
   </div>
 </div>
@@ -562,7 +562,7 @@ html.night .type-btn.is-active { color: #0B1024; }
 </nav>
 <div class="main-col">
 <header class="topbar">
-  <div class="date">jeudi 9 juillet 2026</div><span class="grow"></span>
+  <div class="date" data-today-long>jeudi 9 juillet 2026</div><span class="grow"></span>
   <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
     <input type="text" placeholder="Rechercher…" aria-label="Rechercher"></div>
   <button class="bell" type="button" aria-label="Rappels — 2 en attente"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span class="count">2</span></button>
@@ -572,7 +572,7 @@ html.night .type-btn.is-active { color: #0B1024; }
       <!-- En-tête éditorial -->
       <div style="display:flex;align-items:flex-end;gap:24px;flex:none;">
         <div>
-          <h1 class="page-title big">Jeudi <span class="accent">9 juillet</span></h1>
+          <h1 class="page-title big" id="jourTitre">Jeudi <span class="accent">9 juillet</span></h1>
           <p class="page-sub" style="font-size:14.5px;">Bonjour. Voici votre journée.</p>
         </div>
         <span class="grow"></span>
@@ -583,11 +583,7 @@ html.night .type-btn.is-active { color: #0B1024; }
       </div>
 
       <!-- Bandeau résumé -->
-      <div style="flex:none;display:flex;align-items:center;gap:10px;margin-top:18px;padding:11px 0;border-top:1px solid var(--filet);border-bottom:1px solid var(--filet);font-size:13.5px;font-weight:600;color:var(--ink);">
-        <span>3 missions</span><span style="color:var(--filet);">·</span>
-        <span>2 rendez-vous</span><span style="color:var(--filet);">·</span>
-        <span>7 tâches, <span style="color:var(--danger);">dont 2 échues</span></span>
-      </div>
+      <div id="jourResume" style="flex:none;display:flex;align-items:center;gap:10px;margin-top:18px;padding:11px 0;border-top:1px solid var(--filet);border-bottom:1px solid var(--filet);font-size:13.5px;font-weight:600;color:var(--ink);"></div>
 
       <!-- Deux colonnes -->
       <div class="jour-grid">
@@ -604,16 +600,7 @@ html.night .type-btn.is-active { color: #0B1024; }
 
         <aside class="jour-aside">
           <div class="eyebrow" style="margin-bottom:12px;">Rappels</div>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:26px;">
-            <div class="rappel info">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-              <div class="txt">Demain 10 h : rendez-vous expert-comptable — documents à préparer</div>
-            </div>
-            <div class="rappel danger">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4M12 17h.01"></path></svg>
-              <div class="txt">2 tâches échues côté Personnel</div>
-            </div>
-          </div>
+          <div id="rappels" style="display:flex;flex-direction:column;gap:8px;margin-bottom:26px;"></div>
 
           <div class="eyebrow" style="margin-bottom:4px;">À faire aujourd'hui</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:12px;">
@@ -629,7 +616,7 @@ html.night .type-btn.is-active { color: #0B1024; }
           <div id="tasksExt"></div>
 
           <div class="eyebrow" style="margin:26px 0 10px;">Note du jour</div>
-          <div class="note-card"><textarea id="note" rows="3" aria-label="Note du jour"></textarea></div>
+          <div class="note-card"><textarea id="note" rows="3" aria-label="Note du jour" placeholder="Une note pour aujourd'hui…"></textarea></div>
         </aside>
       </div>
     </main>
@@ -637,7 +624,7 @@ html.night .type-btn.is-active { color: #0B1024; }
 
       <div style="display:flex;align-items:flex-end;gap:20px;flex:none;">
         <div>
-          <h1 class="page-title mid">Semaine du <span class="accent">6 au 12 juillet</span></h1>
+          <h1 class="page-title mid" id="weekTitre">Semaine du <span class="accent">6 au 12 juillet</span></h1>
           <p class="page-sub">Touchez ou glissez un bloc pour le replanifier.</p>
         </div>
         <span class="grow"></span>
@@ -708,19 +695,193 @@ html.night .type-btn.is-active { color: #0B1024; }
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <script>
 /* ═══════════════════════════════════════════════════════════════════════
-   Carnet — runtime partagé
+   Carnet — runtime partagé (v2, daté)
+   Vraie horloge + magasin de données daté unique partagé par tous les écrans.
    Thème jour/nuit, toasts, volet « Planifier », modale de confirmation.
-   Aucun réseau, aucune dépendance. Persistance via localStorage.
+   Aucun réseau. Persistance localStorage. Aucun lien avec d'autres systèmes.
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
   var THEME_KEY = 'carnet.night';
-  var TACHES_KEY = 'carnet.taches.v1';
+  var DATA_KEY = 'carnet.data.v1';
 
-  /* ── Stockage sûr (mode privé / quota) ── */
+  /* ── Stockage sûr ── */
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  /* ── Utilitaires ── */
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function uid(pfx) { return (pfx || 'i') + '-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36); }
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+  /* ── Dates (français) ── */
+  var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  var MOIS_AB = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  var JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+  var JOURS_AB = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function parseYmd(s) { var p = String(s).split('-'); return new Date(+p[0], (+p[1]) - 1, +p[2]); }
+  function addDays(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); x.setHours(0, 0, 0, 0); return x; }
+  function startOfWeek(d) { var x = new Date(d); var wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); x.setHours(0, 0, 0, 0); return x; }
+  function diffDays(aY, bY) { return Math.round((parseYmd(aY).getTime() - parseYmd(bY).getTime()) / 86400000); }
+  function frLong(d) { return JOURS[d.getDay()] + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()] + ' ' + d.getFullYear(); }
+  function frShort(y) { var d = parseYmd(y); return d.getDate() + ' ' + MOIS_AB[d.getMonth()]; }
+
+  // Aujourd'hui — vraie date du jour, avec surcharge de test (?date=YYYY-MM-DD ou localStorage carnet.today)
+  function today() {
+    var o = null;
+    try { var u = new URLSearchParams(location.search); o = u.get('date'); } catch (e) {}
+    if (!o) { o = lsGet('carnet.today'); }
+    var d = o ? parseYmd(o) : new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  // Libellé d'échéance relatif à aujourd'hui
+  function relEcheance(dateY, t) {
+    if (!dateY) return '';
+    var dd = diffDays(dateY, ymd(t));
+    if (dd < 0) {
+      if (dd === -1) return 'depuis hier';
+      if (dd >= -6) return 'depuis ' + JOURS[parseYmd(dateY).getDay()];
+      return 'échue le ' + frShort(dateY);
+    }
+    if (dd === 0) return "aujourd'hui";
+    if (dd === 1) return 'demain';
+    if (dd <= 6) return JOURS[parseYmd(dateY).getDay()];
+    return 'le ' + frShort(dateY);
+  }
+  // Groupe calculé d'une tâche selon sa date
+  function statutTache(item, t) {
+    if (!item.date) return 'unjour';
+    var dd = diffDays(item.date, ymd(t));
+    if (dd < 0) return 'echues';
+    if (dd === 0) return 'auj';
+    return 'avenir';
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     MAGASIN DE DONNÉES DATÉ — source unique partagée par tous les écrans
+     item = { id, type:'mission'|'rdv'|'tache'|'rappel', monde:'entreprise'|'personnel',
+              titre, date:'YYYY-MM-DD'|null, heure?, fin?, lieu?, note?, prio?, recur?,
+              fait?:bool, faitHeure? }
+     ══════════════════════════════════════════════════════════════════ */
+  var _data = null;
+  function loadData() {
+    var base = { items: [], notes: {}, seeded: false };
+    try {
+      var raw = lsGet(DATA_KEY);
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (d && typeof d === 'object') {
+          if (Array.isArray(d.items)) base.items = d.items;
+          if (d.notes && typeof d.notes === 'object') base.notes = d.notes;
+          base.seeded = !!d.seeded;
+        }
+      }
+    } catch (e) {}
+    return base;
+  }
+  function data() {
+    if (_data) return _data;
+    _data = loadData();
+    if (!_data.seeded) {
+      _data.items = seedItems();
+      _data.notes[ymd(today())] = "Voir avec Sofiane pour l'échange de tournée de vendredi.";
+      _data.seeded = true; persist(false);
+    }
+    return _data;
+  }
+  function persist(emit) {
+    lsSet(DATA_KEY, JSON.stringify({ items: _data.items, notes: _data.notes, seeded: _data.seeded }));
+    if (emit !== false) { try { window.dispatchEvent(new CustomEvent('carnet:data-changed')); } catch (e) {} }
+  }
+
+  var store = {
+    today: today,
+    ymd: ymd, parseYmd: parseYmd, addDays: addDays, startOfWeek: startOfWeek,
+    diffDays: diffDays, frLong: frLong, frShort: frShort,
+    relEcheance: relEcheance, statutTache: statutTache,
+    MOIS: MOIS, JOURS: JOURS, JOURS_AB: JOURS_AB,
+    all: function () { return data().items; },
+    byId: function (id) { return data().items.filter(function (x) { return x.id === id; })[0] || null; },
+    add: function (it) { it.id = it.id || uid(it.type); data().items.push(it); persist(); return it; },
+    update: function (id, patch) { var it = this.byId(id); if (it) { for (var k in patch) it[k] = patch[k]; persist(); } return it; },
+    toggle: function (id) {
+      var it = this.byId(id);
+      if (it) {
+        it.fait = !it.fait;
+        if (it.fait && !it.faitHeure && (it.type === 'mission' || it.type === 'rdv')) it.faitHeure = it.fin || it.heure || '';
+        persist();
+      }
+      return it;
+    },
+    remove: function (id) { data().items = data().items.filter(function (x) { return x.id !== id; }); persist(); },
+    reschedule: function (id, dateY) { return this.update(id, { date: dateY }); },
+    onDay: function (dateY) { return data().items.filter(function (x) { return x.date === dateY; }); },
+    inRange: function (aY, bY) { return data().items.filter(function (x) { return x.date && x.date >= aY && x.date <= bY; }); },
+    tasks: function () { return data().items.filter(function (x) { return x.type === 'tache'; }); },
+    note: function (dateY) { return data().notes[dateY] || ''; },
+    // Pas d'émission : la note du jour n'affecte aucun autre écran → évite de
+    // reconstruire les listes (et de déplacer le curseur) à chaque frappe.
+    setNote: function (dateY, txt) { data().notes[dateY] = txt; persist(false); }
+  };
+
+  // Amorçage : jeu d'exemple RELATIF à aujourd'hui (l'app paraît toujours à jour)
+  function seedItems() {
+    var t = today();
+    function d(off) { return ymd(addDays(t, off)); }
+    // lundi de la semaine prochaine, pour ancrer un hebdomadaire
+    var nextMon = ymd(addDays(startOfWeek(t), 7));
+    var items = [];
+    function push(o) { o.id = uid(o.type); items.push(o); }
+
+    // — Aujourd'hui : missions & rendez-vous (le fil) —
+    push({ type: 'mission', monde: 'entreprise', titre: 'Vitrerie & sols — Cabinet Vernet & Associés', date: d(0), heure: '06 h 30', fin: '08 h 30', lieu: 'Lyon 6ᵉ', fait: true, faitHeure: '8 h 25' });
+    push({ type: 'rdv', monde: 'personnel', titre: 'Expert-comptable — cabinet Fiduciaire du Rhône', date: d(0), heure: '10 h 00', fin: '11 h 00', lieu: 'Lyon 2ᵉ', note: 'Préparer les relevés' });
+    push({ type: 'mission', monde: 'entreprise', titre: 'Remise en état fin de chantier — Résidence Les Terrasses de Gerland', date: d(0), heure: '14 h 00', fin: '16 h 00', lieu: 'Lyon 7ᵉ' });
+    push({ type: 'rdv', monde: 'personnel', titre: 'Visite de site avec M. Delorme (syndic Foncia)', date: d(0), heure: '17 h 30', lieu: 'Résidence Les Charmilles' });
+
+    // — Historique (pour le Journal + Ma semaine) —
+    push({ type: 'mission', monde: 'entreprise', titre: 'Bureaux Groupe Ardec, Lyon 3ᵉ', date: d(-3), heure: '06 h – 09 h', fait: true, faitHeure: '9 h 15' });
+    push({ type: 'mission', monde: 'entreprise', titre: 'Copropriété Les Peupliers', date: d(-2), heure: '07 h – 10 h', fait: true, faitHeure: '10 h 05' });
+    push({ type: 'rdv', monde: 'personnel', titre: 'Fournisseur Hyprodis — consommables', date: d(-2), heure: '14 h 00', fait: true, faitHeure: '14 h 20' });
+    push({ type: 'mission', monde: 'entreprise', titre: 'Brasserie du Parc', date: d(-1), heure: '14 h – 16 h', fait: true, faitHeure: '16 h 10' });
+
+    // — À venir cette semaine (Ma semaine) —
+    push({ type: 'mission', monde: 'entreprise', titre: 'Vitrines — Rue de la République', date: d(1), heure: '06 h 30 – 08 h 30' });
+    push({ type: 'mission', monde: 'entreprise', titre: 'Parties communes — Résidence Les Charmilles', date: d(2), heure: '08 h – 12 h' });
+
+    // — Tâches Entreprise —
+    push({ type: 'tache', monde: 'entreprise', titre: 'Commander deux monobrosses', date: d(0), prio: true });
+    push({ type: 'tache', monde: 'entreprise', titre: 'Vérifier le matériel du fourgon 2', date: d(0) });
+    push({ type: 'tache', monde: 'entreprise', titre: "Préparer le planning d'août", date: d(1), prio: true });
+    push({ type: 'tache', monde: 'entreprise', titre: 'Appeler Karim pour son entretien annuel', date: d(3) });
+    push({ type: 'tache', monde: 'entreprise', titre: 'Relever les heures des équipes', date: nextMon, recur: 'chaque lundi' });
+    push({ type: 'tache', monde: 'entreprise', titre: 'Réorganiser le local de stockage', date: null });
+
+    // — Tâches Personnel —
+    push({ type: 'tache', monde: 'personnel', titre: 'Déposer le dossier à la banque', date: d(-1), prio: true });
+    push({ type: 'tache', monde: 'personnel', titre: 'Prendre RDV contrôle technique fourgon', date: d(-2) });
+    push({ type: 'tache', monde: 'personnel', titre: 'Récupérer les tenues brodées', date: d(0) });
+    push({ type: 'tache', monde: 'personnel', titre: 'Réponse à la mairie de Villeurbanne', date: d(2), prio: true });
+    push({ type: 'tache', monde: 'personnel', titre: 'Passage chez Hyprodis, consommables', date: d(9), recur: 'chaque mois' });
+    push({ type: 'tache', monde: 'personnel', titre: 'Comparer les assurances des fourgons', date: null });
+
+    // — Tâches accomplies récemment (nourrissent le Journal) —
+    push({ type: 'tache', monde: 'entreprise', titre: 'Relevé des heures — semaine passée', date: d(-3), fait: true });
+    push({ type: 'tache', monde: 'entreprise', titre: 'Réassort produits sols', date: d(-1), fait: true });
+    push({ type: 'tache', monde: 'personnel', titre: 'Virement fournisseur Hyprodis', date: d(-2), fait: true });
+    push({ type: 'tache', monde: 'personnel', titre: 'Relance devis syndic', date: d(-1), fait: true });
+
+    return items;
+  }
 
   /* ── Thème ── */
   function isNight() { return lsGet(THEME_KEY) === '1'; }
@@ -738,24 +899,12 @@ html.night .type-btn.is-active { color: #0B1024; }
   }
   function toggleNight() { lsSet(THEME_KEY, isNight() ? '0' : '1'); applyTheme(); }
 
-  /* ── Utilitaires ── */
-  function escapeHtml(s) {
-    return String(s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-
   /* ── Toasts (sombres) ── */
   var CHECK_ICON = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
   var toastTimer;
   function ensureToastHost() {
     var h = document.getElementById('toasts');
-    if (!h) {
-      h = document.createElement('div');
-      h.className = 'toasts'; h.id = 'toasts';
-      h.setAttribute('aria-live', 'polite');
-      document.body.appendChild(h);
-    }
+    if (!h) { h = document.createElement('div'); h.className = 'toasts'; h.id = 'toasts'; h.setAttribute('aria-live', 'polite'); document.body.appendChild(h); }
     return h;
   }
   function toast(message, opts) {
@@ -767,18 +916,13 @@ html.night .type-btn.is-active { color: #0B1024; }
     if (opts.action) {
       var b = document.createElement('button');
       b.className = 'toast-action'; b.type = 'button'; b.textContent = opts.action;
-      b.addEventListener('click', function () {
-        if (typeof opts.onAction === 'function') opts.onAction();
-        if (el.parentNode) el.parentNode.removeChild(el);
-      });
+      b.addEventListener('click', function () { if (typeof opts.onAction === 'function') opts.onAction(); if (el.parentNode) el.parentNode.removeChild(el); });
       el.appendChild(b);
     }
     host.innerHTML = '';
     host.appendChild(el);
     var remove = function () { if (el.parentNode) el.parentNode.removeChild(el); };
     var arm = function (ms) { clearTimeout(toastTimer); toastTimer = setTimeout(remove, ms); };
-    // On suspend la disparition tant que le pointeur/focus est sur le toast,
-    // pour que l'action (« Voir ») reste atteignable.
     el.addEventListener('pointerenter', function () { clearTimeout(toastTimer); });
     el.addEventListener('pointerleave', function () { arm(1600); });
     el.addEventListener('focusin', function () { clearTimeout(toastTimer); });
@@ -786,36 +930,13 @@ html.night .type-btn.is-active { color: #0B1024; }
     arm(opts.duration || 3200);
   }
 
-  /* ── Écriture d'une tâche dans le registre partagé (écran Tâches) ── */
-  function ajouterTachePartagee(monde, titre, date) {
-    var store = { cochees: {}, ajouts: { entreprise: [], exterieur: [] } };
-    try {
-      var raw = lsGet(TACHES_KEY);
-      if (raw) {
-        var d = JSON.parse(raw);
-        if (d && typeof d === 'object') {
-          store.cochees = (d.cochees && typeof d.cochees === 'object') ? d.cochees : {};
-          if (d.ajouts && typeof d.ajouts === 'object') {
-            if (Array.isArray(d.ajouts.entreprise)) store.ajouts.entreprise = d.ajouts.entreprise;
-            if (Array.isArray(d.ajouts.exterieur)) store.ajouts.exterieur = d.ajouts.exterieur;
-          }
-        }
-      }
-    } catch (e) { /* store repart propre */ }
-    var MAP = { "Aujourd'hui": "aujourd'hui", 'Demain': 'demain', 'Lundi prochain': 'lundi prochain', 'Choisir…': '' };
-    // « Choisir… » = sans date → registre « Un jour », pas d'échéance (cohérent avec le toast).
-    var groupe = (date === 'Choisir…') ? 'unjour' : ((date === 'Demain' || date === 'Lundi prochain') ? 'avenir' : 'auj');
-    var echeance = (date in MAP) ? MAP[date] : "aujourd'hui";
-    var cle = (monde === 'exterieur') ? 'exterieur' : 'entreprise';
-    var id = cle + '-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
-    store.ajouts[cle].push({ id: id, titre: titre, groupe: groupe, echeance: echeance });
-    lsSet(TACHES_KEY, JSON.stringify(store));
-    // Signale à l'écran Tâches (même onglet) de se rafraîchir s'il est affiché.
-    try { window.dispatchEvent(new CustomEvent('carnet:taches-changed')); } catch (e) { /* ignore */ }
-  }
+  /* ── Focus / inert partagés pour les modales ── */
+  function appInert(on) { var a = document.querySelector('.app'); if (a) { try { a.inert = on; } catch (e) {} } }
+  function restoreFocus(el) { if (el && typeof el.focus === 'function' && document.contains(el)) el.focus(); }
 
-  /* ── Volet « Planifier » ── */
+  /* ── Volet « Planifier » (écrit dans le magasin daté, tous types) ── */
   var TYPES = ['Mission', 'Rendez-vous', 'Tâche', 'Rappel'];
+  var TYPE_CODE = { 'Mission': 'mission', 'Rendez-vous': 'rdv', 'Tâche': 'tache', 'Rappel': 'rappel' };
   var DATES = ["Aujourd'hui", 'Demain', 'Lundi prochain', 'Choisir…'];
   var PLACE = {
     'Mission': 'Ex. : Vitrerie & sols — Cabinet Vernet',
@@ -824,104 +945,91 @@ html.night .type-btn.is-active { color: #0B1024; }
     'Rappel': 'Ex. : Préparer les relevés pour demain'
   };
   var FEM = { 'Mission': true, 'Tâche': true };
-  var planOverlay = null;
-  var planOpener = null;
+  var planOverlay = null, planOpener = null;
   var planState = { type: 'Tâche', monde: 'entreprise', date: "Aujourd'hui" };
 
-  function appInert(on) { var a = document.querySelector('.app'); if (a) { try { a.inert = on; } catch (e) {} } }
-  function restoreFocus(el) { if (el && typeof el.focus === 'function' && document.contains(el)) el.focus(); }
+  function resolveDate() {
+    var t = today();
+    if (planState.date === 'Demain') return ymd(addDays(t, 1));
+    if (planState.date === 'Lundi prochain') return ymd(addDays(startOfWeek(t), 7));
+    if (planState.date === 'Choisir…') { var inp = planOverlay.querySelector('[data-plan-datepick]'); return (inp && inp.value) ? inp.value : ymd(t); }
+    return ymd(t);
+  }
+  function quandLabel() {
+    var dateY = resolveDate();
+    var dd = diffDays(dateY, ymd(today()));
+    if (dd === 0) return 'aujourd’hui';
+    if (dd === 1) return 'demain';
+    return 'le ' + frShort(dateY);
+  }
 
   function planModalHtml() {
-    var typeBtns = TYPES.map(function (t) {
-      return '<button type="button" class="type-btn" data-type="' + escapeHtml(t) + '">' + escapeHtml(t) + '</button>';
-    }).join('');
-    var dateBtns = DATES.map(function (d) {
-      return '<button type="button" class="date-btn" data-date="' + escapeHtml(d) + '">' + escapeHtml(d) + '</button>';
-    }).join('');
+    var typeBtns = TYPES.map(function (x) { return '<button type="button" class="type-btn" data-type="' + escapeHtml(x) + '">' + escapeHtml(x) + '</button>'; }).join('');
+    var dateBtns = DATES.map(function (x) { return '<button type="button" class="date-btn" data-date="' + escapeHtml(x) + '">' + escapeHtml(x) + '</button>'; }).join('');
     return '' +
       '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="planTitre">' +
         '<div class="modal-head">' +
           '<h1 class="modal-title" id="planTitre">Planifier</h1>' +
-          '<span class="modal-sub">dix secondes, pas plus.</span>' +
-          '<span class="grow"></span>' +
-          '<button type="button" class="modal-close" data-plan-close aria-label="Fermer">' +
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>' +
-          '</button>' +
+          '<span class="modal-sub">dix secondes, pas plus.</span><span class="grow"></span>' +
+          '<button type="button" class="modal-close" data-plan-close aria-label="Fermer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>' +
         '</div>' +
         '<div class="field-label" style="margin:22px 0 8px;">Type</div>' +
-        '<div class="plan-grid4" data-plan-types>' + typeBtns + '</div>' +
+        '<div class="plan-grid4">' + typeBtns + '</div>' +
         '<div class="field-label" style="margin:20px 0 8px;">Intitulé</div>' +
         '<input type="text" class="field" data-plan-intitule aria-label="Intitulé">' +
         '<div class="field-label" style="margin:20px 0 8px;">Monde</div>' +
         '<div class="plan-grid2">' +
           '<button type="button" class="monde-btn ent" data-monde="entreprise"><span class="marker ent"></span>Entreprise</button>' +
-          '<button type="button" class="monde-btn ext" data-monde="exterieur"><span class="marker ext"></span>Personnel</button>' +
+          '<button type="button" class="monde-btn ext" data-monde="personnel"><span class="marker ext"></span>Personnel</button>' +
         '</div>' +
         '<div class="plan-datetime">' +
-          '<div>' +
-            '<div class="field-label" style="margin-bottom:8px;">Date</div>' +
-            '<div class="plan-dates" data-plan-dates>' + dateBtns + '</div>' +
-          '</div>' +
-          '<div>' +
-            '<div class="field-label" style="margin-bottom:8px;">Heure</div>' +
-            '<input type="text" class="heure-field" data-plan-heure value="14 h 00" aria-label="Heure">' +
-          '</div>' +
+          '<div><div class="field-label" style="margin-bottom:8px;">Date</div><div class="plan-dates">' + dateBtns + '</div>' +
+            '<input type="date" class="field field--sm" data-plan-datepick style="margin-top:8px;display:none;" aria-label="Choisir une date"></div>' +
+          '<div><div class="field-label" style="margin-bottom:8px;">Heure</div><input type="text" class="heure-field" data-plan-heure value="14 h 00" aria-label="Heure"></div>' +
         '</div>' +
         '<div class="modal-actions">' +
-          '<span class="modal-recap" data-plan-recap></span>' +
-          '<span class="grow"></span>' +
+          '<span class="modal-recap" data-plan-recap></span><span class="grow"></span>' +
           '<button type="button" class="btn btn--ghost" data-plan-cancel>Annuler</button>' +
-          '<button type="button" class="btn btn--primary" data-plan-submit>' +
-            '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>' +
-            'Planifier</button>' +
+          '<button type="button" class="btn btn--primary" data-plan-submit><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Planifier</button>' +
         '</div>' +
       '</div>';
   }
-
   function refreshPlan() {
     if (!planOverlay) return;
-    planOverlay.querySelectorAll('[data-type]').forEach(function (b) {
-      b.classList.toggle('is-active', b.getAttribute('data-type') === planState.type);
-    });
-    planOverlay.querySelectorAll('[data-monde]').forEach(function (b) {
-      b.classList.toggle('is-active', b.getAttribute('data-monde') === planState.monde);
-    });
-    planOverlay.querySelectorAll('[data-date]').forEach(function (b) {
-      b.classList.toggle('is-active', b.getAttribute('data-date') === planState.date);
-    });
-    var inp = planOverlay.querySelector('[data-plan-intitule]');
-    inp.setAttribute('placeholder', PLACE[planState.type] || '');
+    planOverlay.querySelectorAll('[data-type]').forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-type') === planState.type); });
+    planOverlay.querySelectorAll('[data-monde]').forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-monde') === planState.monde); });
+    planOverlay.querySelectorAll('[data-date]').forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-date') === planState.date); });
+    planOverlay.querySelector('[data-plan-intitule]').setAttribute('placeholder', PLACE[planState.type] || '');
+    planOverlay.querySelector('[data-plan-datepick]').style.display = planState.date === 'Choisir…' ? 'block' : 'none';
+    // l'heure n'a de sens que pour Mission / Rendez-vous / Rappel
+    var estTache = planState.type === 'Tâche';
+    planOverlay.querySelector('[data-plan-heure]').style.opacity = estTache ? '0.4' : '1';
     planOverlay.querySelector('[data-plan-recap]').textContent =
-      planState.type + ' · ' + (planState.monde === 'entreprise' ? 'Entreprise' : 'Personnel') + ' · ' + planState.date.toLowerCase();
+      planState.type + ' · ' + (planState.monde === 'entreprise' ? 'Entreprise' : 'Personnel') + ' · ' + quandLabel();
   }
-
   function buildPlanifier() {
     if (planOverlay) return;
     planOverlay = document.createElement('div');
-    planOverlay.className = 'overlay';
-    planOverlay.id = 'planOverlay';
+    planOverlay.className = 'overlay'; planOverlay.id = 'planOverlay';
     planOverlay.innerHTML = planModalHtml();
     document.body.appendChild(planOverlay);
-
     planOverlay.addEventListener('click', function (e) {
       if (e.target === planOverlay) { closePlanifier(); return; }
       var t = e.target.closest('[data-type]'); if (t) { planState.type = t.getAttribute('data-type'); refreshPlan(); return; }
       var m = e.target.closest('[data-monde]'); if (m) { planState.monde = m.getAttribute('data-monde'); refreshPlan(); return; }
-      var d = e.target.closest('[data-date]'); if (d) { planState.date = d.getAttribute('data-date'); refreshPlan(); return; }
+      var dd = e.target.closest('[data-date]'); if (dd) { planState.date = dd.getAttribute('data-date'); refreshPlan(); return; }
     });
     planOverlay.querySelector('[data-plan-close]').addEventListener('click', closePlanifier);
     planOverlay.querySelector('[data-plan-cancel]').addEventListener('click', closePlanifier);
     planOverlay.querySelector('[data-plan-submit]').addEventListener('click', submitPlanifier);
-    planOverlay.querySelector('[data-plan-intitule]').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') submitPlanifier();
-    });
+    planOverlay.querySelector('[data-plan-datepick]').addEventListener('change', refreshPlan);
+    planOverlay.querySelector('[data-plan-intitule]').addEventListener('keydown', function (e) { if (e.key === 'Enter') submitPlanifier(); });
     refreshPlan();
   }
-
   function openPlanifier() {
     buildPlanifier();
     planOpener = document.activeElement;
-    appInert(true); // piège le focus : hors du volet, plus rien n'est focalisable
+    appInert(true);
     planOverlay.classList.add('open');
     var inp = planOverlay.querySelector('[data-plan-intitule]');
     if (inp) setTimeout(function () { inp.focus(); }, 30);
@@ -936,15 +1044,22 @@ html.night .type-btn.is-active { color: #0B1024; }
   function submitPlanifier() {
     var inp = planOverlay.querySelector('[data-plan-intitule]');
     var titre = (inp.value || '').trim() || planState.type;
-    var fem = !!FEM[planState.type];
-    var quand = planState.date === 'Choisir…' ? '' : ' pour ' + planState.date.toLowerCase();
-    // Une Tâche rejoint réellement le registre partagé de l'écran Tâches.
-    if (planState.type === 'Tâche') ajouterTachePartagee(planState.monde, titre, planState.date);
+    var type = TYPE_CODE[planState.type];
+    var it = { type: type, monde: planState.monde, titre: titre, date: resolveDate() };
+    if (type !== 'tache') { var h = planOverlay.querySelector('[data-plan-heure]').value.trim(); if (h) it.heure = h; }
+    var lbl = quandLabel();
+    store.add(it);
     closePlanifier();
     inp.value = '';
-    toast(planState.type + ' planifié' + (fem ? 'e' : '') + quand + '.', {
+    var hashDest = type === 'tache' ? '#taches' : '#journee';
+    var fileDest = type === 'tache' ? 'taches.html' : 'ma-journee.html';
+    toast(planState.type + ' planifié' + (FEM[planState.type] ? 'e' : '') + ' pour ' + lbl + '.', {
       action: 'Voir',
-      onAction: function () { window.location.hash = planState.type === 'Tâche' ? '#taches' : '#journee'; }
+      onAction: function () {
+        // SPA (navigation par hash) ou multi-pages : on gère les deux.
+        if (document.querySelector('[data-route]')) { if (location.hash !== hashDest) location.hash = hashDest; }
+        else location.href = fileDest;
+      }
     });
   }
 
@@ -954,15 +1069,13 @@ html.night .type-btn.is-active { color: #0B1024; }
     var opener = document.activeElement;
     var ov = document.createElement('div');
     ov.className = 'overlay';
-    ov.innerHTML = '' +
-      '<div class="modal modal--confirm" role="dialog" aria-modal="true">' +
-        '<div class="modal-title sm">' + escapeHtml(o.title || 'Confirmer ?') + '</div>' +
-        (o.body ? '<div style="margin-top:8px;font-size:13.5px;font-weight:500;line-height:1.5;color:var(--ink2);">' + escapeHtml(o.body) + '</div>' : '') +
-        '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--filet);">' +
-          '<button type="button" class="btn btn--ghost" data-cancel style="height:46px;">' + escapeHtml(o.cancelLabel || 'Garder') + '</button>' +
-          '<button type="button" class="btn ' + (o.danger ? 'btn--danger' : 'btn--primary') + '" data-ok style="height:46px;">' + escapeHtml(o.confirmLabel || 'Confirmer') + '</button>' +
-        '</div>' +
-      '</div>';
+    ov.innerHTML = '<div class="modal modal--confirm" role="dialog" aria-modal="true">' +
+      '<div class="modal-title sm">' + escapeHtml(o.title || 'Confirmer ?') + '</div>' +
+      (o.body ? '<div style="margin-top:8px;font-size:13.5px;font-weight:500;line-height:1.5;color:var(--ink2);">' + escapeHtml(o.body) + '</div>' : '') +
+      '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--filet);">' +
+        '<button type="button" class="btn btn--ghost" data-cancel style="height:46px;">' + escapeHtml(o.cancelLabel || 'Garder') + '</button>' +
+        '<button type="button" class="btn ' + (o.danger ? 'btn--danger' : 'btn--primary') + '" data-ok style="height:46px;">' + escapeHtml(o.confirmLabel || 'Confirmer') + '</button>' +
+      '</div></div>';
     document.body.appendChild(ov);
     appInert(true);
     requestAnimationFrame(function () { ov.classList.add('open'); });
@@ -971,9 +1084,8 @@ html.night .type-btn.is-active { color: #0B1024; }
     function onKey(e) { if (e.key === 'Escape') close(); }
     function close() {
       ov.classList.remove('open');
-      document.removeEventListener('keydown', onKey); // toujours retiré, quelle que soit la voie de fermeture
-      appInert(false);
-      restoreFocus(opener);
+      document.removeEventListener('keydown', onKey);
+      appInert(false); restoreFocus(opener);
       setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 200);
     }
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
@@ -982,36 +1094,49 @@ html.night .type-btn.is-active { color: #0B1024; }
     document.addEventListener('keydown', onKey);
   }
 
+  /* ── Barre supérieure / dates dynamiques ── */
+  function fillDates() {
+    var t = today();
+    var lng = cap(frLong(t));
+    document.querySelectorAll('[data-today-long]').forEach(function (el) { el.textContent = lng; });
+    document.querySelectorAll('[data-today-lieu]').forEach(function (el) { el.textContent = lng + ' · Lyon'; });
+  }
+
+  // Compteur de la cloche, partagé par tous les écrans : RDV/rappel de demain + retards Personnel.
+  function updateBell() {
+    var t = today();
+    var demain = onDayHelper(ymd(addDays(t, 1))).filter(function (x) { return x.type === 'rdv' || x.type === 'rappel'; }).length > 0;
+    var nE = store.tasks().filter(function (x) { return x.monde === 'personnel' && !x.fait && statutTache(x, t) === 'echues'; }).length;
+    var c = (demain ? 1 : 0) + (nE > 0 ? 1 : 0);
+    document.querySelectorAll('.bell .count').forEach(function (el) { el.textContent = c; el.style.display = c ? 'flex' : 'none'; });
+    document.querySelectorAll('.bell').forEach(function (b) { b.setAttribute('aria-label', c ? ('Rappels — ' + c + ' en attente') : 'Rappels'); });
+  }
+  function onDayHelper(dateY) { return store.onDay(dateY); }
+
   /* ── Amorçage ── */
   applyTheme();
   function init() {
     applyTheme();
+    fillDates();
+    updateBell();
+    window.addEventListener('carnet:data-changed', updateBell);
     var nb = document.getElementById('nightToggle');
     if (nb) nb.addEventListener('click', toggleNight);
     var plan = document.querySelectorAll('[data-open-planifier]');
-    plan.forEach(function (el) {
-      el.addEventListener('click', function (e) { e.preventDefault(); openPlanifier(); });
-    });
-    // On ne construit le volet que sur les écrans qui peuvent l'ouvrir
-    // (pas sur la connexion). openPlanifier() le construit sinon à la demande.
+    plan.forEach(function (el) { el.addEventListener('click', function (e) { e.preventDefault(); openPlanifier(); }); });
     if (plan.length) buildPlanifier();
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && planOverlay && planOverlay.classList.contains('open')) closePlanifier();
-    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && planOverlay && planOverlay.classList.contains('open')) closePlanifier(); });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
   /* ── API publique ── */
   window.Carnet = {
-    toast: toast,
+    store: store,
+    toast: toast, confirm: confirmModal,
     escapeHtml: escapeHtml,
-    isNight: isNight,
-    toggleNight: toggleNight,
-    applyTheme: applyTheme,
+    isNight: isNight, toggleNight: toggleNight, applyTheme: applyTheme,
     openPlanifier: openPlanifier,
-    confirm: confirmModal,
-    TACHES_KEY: TACHES_KEY
+    today: today, ymd: ymd, frLong: frLong, cap: cap
   };
 })();
 
@@ -1020,124 +1145,115 @@ html.night .type-btn.is-active { color: #0B1024; }
 
 (function () {
   'use strict';
-  var esc = window.Carnet.escapeHtml;
-  var STORE = 'carnet.journee.v1';
-
-  var FIL = [
-    { deb: '06 h 30', fin: '08 h 30', type: 'Mission', monde: 'Entreprise',
-      titre: 'Vitrerie & sols — Cabinet Vernet & Associés', lieu: 'Lyon 6ᵉ',
-      statut: 'Terminée à 8 h 25', kind: 'success', done: true },
-    { deb: '10 h 00', fin: '11 h 00', type: 'Rendez-vous', monde: 'Personnel',
-      titre: 'Expert-comptable — cabinet Fiduciaire du Rhône', lieu: 'Lyon 2ᵉ',
-      statut: 'À venir', kind: 'neutral', note: 'Préparer les relevés' },
-    { deb: '14 h 00', fin: '16 h 00', type: 'Mission', monde: 'Entreprise',
-      titre: 'Remise en état fin de chantier — Résidence Les Terrasses de Gerland', lieu: 'Lyon 7ᵉ',
-      statut: 'À venir', kind: 'neutral' },
-    { deb: '17 h 30', fin: '', type: 'Rendez-vous', monde: 'Personnel',
-      titre: 'Visite de site avec M. Delorme (syndic Foncia)', lieu: 'Résidence Les Charmilles',
-      statut: 'À venir', kind: 'neutral' }
-  ];
-
-  var TACHES = {
-    entreprise: [
-      { id: 'j-e1', titre: 'Commander deux monobrosses', echeance: "aujourd'hui" },
-      { id: 'j-e2', titre: 'Vérifier le matériel du fourgon 2', echeance: "aujourd'hui" },
-      { id: 'j-e3', titre: "Préparer le planning d'août", echeance: 'vendredi' },
-      { id: 'j-e4', titre: 'Appeler Karim pour son entretien annuel', echeance: 'cette semaine' }
-    ],
-    exterieur: [
-      { id: 'j-x1', titre: 'Déposer le dossier à la banque', echeance: 'échue depuis hier', echue: true },
-      { id: 'j-x2', titre: 'Prendre RDV contrôle technique fourgon', echeance: 'échue', echue: true },
-      { id: 'j-x3', titre: 'Réponse à la mairie de Villeurbanne', echeance: 'avant vendredi' },
-      { id: 'j-x4', titre: 'Récupérer les tenues brodées', echeance: 'cette semaine' }
-    ]
-  };
-
+  var S = window.Carnet.store, esc = window.Carnet.escapeHtml, cap = window.Carnet.cap;
   var PIN = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
   var CHECK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
+  var CLOCK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>';
+  var ALERT = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4M12 17h.01"></path></svg>';
 
-  var state = load();
-  function load() {
-    var base = { cochees: {}, note: "Voir avec Sofiane pour l'échange de tournée de vendredi." };
-    try {
-      var raw = localStorage.getItem(STORE);
-      if (raw) { var d = JSON.parse(raw); if (d && typeof d === 'object') {
-        base.cochees = (d.cochees && typeof d.cochees === 'object') ? d.cochees : {};
-        if (typeof d.note === 'string') base.note = d.note;
-      } }
-    } catch (e) {}
-    return base;
+  function parseHM(h) { var m = String(h || '').match(/(\d{1,2})\s*h(?:\s*(\d{2}))?/); return m ? (+m[1]) * 60 + (m[2] ? +m[2] : 0) : 9999; }
+  function pastille(m) { return m === 'entreprise' ? 'var(--entreprise)' : 'var(--or-fonce)'; }
+  function typeLabel(t) { return t === 'mission' ? 'Mission' : (t === 'rdv' ? 'Rendez-vous' : (t === 'rappel' ? 'Rappel' : 'Tâche')); }
+  function mondeLabel(m) { return m === 'entreprise' ? 'Entreprise' : 'Personnel'; }
+
+  function renderHeader() {
+    var t = S.today();
+    document.getElementById('jourTitre').innerHTML =
+      esc(cap(S.JOURS[t.getDay()])) + ' <span class="accent">' + t.getDate() + ' ' + esc(S.MOIS[t.getMonth()]) + '</span>';
   }
-  function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
 
-  function pastille(monde) { return monde === 'Entreprise' ? 'var(--entreprise)' : 'var(--or-fonce)'; }
+  function renderResume() {
+    var t = S.today(), ty = S.ymd(t);
+    var items = S.onDay(ty);
+    var miss = items.filter(function (x) { return x.type === 'mission'; }).length;
+    var rdv = items.filter(function (x) { return x.type === 'rdv'; }).length;
+    var open = S.tasks().filter(function (x) { var st = S.statutTache(x, t); return !x.fait && (st === 'auj' || st === 'echues'); });
+    var nT = open.length;
+    var nE = open.filter(function (x) { return S.statutTache(x, t) === 'echues'; }).length;
+    document.getElementById('jourResume').innerHTML =
+      '<span>' + miss + ' mission' + (miss > 1 ? 's' : '') + '</span><span style="color:var(--filet);">·</span>' +
+      '<span>' + rdv + ' rendez-vous</span><span style="color:var(--filet);">·</span>' +
+      '<span>' + nT + ' tâche' + (nT > 1 ? 's' : '') + (nE > 0 ? ', <span style="color:var(--danger);">dont ' + nE + ' échue' + (nE > 1 ? 's' : '') + '</span>' : '') + '</span>';
+  }
 
   function renderFil() {
-    document.getElementById('fil').innerHTML = FIL.map(function (ev) {
-      var p = pastille(ev.monde);
+    var t = S.today();
+    var evs = S.onDay(S.ymd(t)).filter(function (x) { return x.type === 'mission' || x.type === 'rdv'; });
+    evs.sort(function (a, b) { return parseHM(a.heure) - parseHM(b.heure); });
+    var html = evs.map(function (ev) {
+      var p = pastille(ev.monde), done = !!ev.fait;
+      var statut = done ? ('Terminée à ' + (ev.faitHeure || ev.fin || '')) : 'À venir';
+      var kind = done ? 'success' : 'neutral';
       return '<div class="fil-row">' +
-        '<div class="fil-time">' +
-          '<div class="deb"' + (ev.done ? ' style="color:var(--ink2)"' : '') + '>' + esc(ev.deb) + '</div>' +
-          (ev.fin ? '<div class="fin">' + esc(ev.fin) + '</div>' : '') +
-        '</div>' +
+        '<div class="fil-time"><div class="deb"' + (done ? ' style="color:var(--ink2)"' : '') + '>' + esc(ev.heure || '') + '</div>' + (ev.fin ? '<div class="fin">' + esc(ev.fin) + '</div>' : '') + '</div>' +
         '<div class="fil-axis"><div class="fil-line"></div><div class="fil-dot" style="background:' + p + '"></div></div>' +
-        '<div class="event' + (ev.done ? ' done' : '') + '"' + (ev.done ? ' style="opacity:.72"' : '') + '>' +
-          '<div class="event-head">' +
-            '<span class="event-type">' + esc(ev.type) + '</span>' +
-            '<span class="event-monde" style="color:' + p + '">' + esc(ev.monde) + '</span>' +
-            '<span class="grow"></span>' +
-            '<span class="status status--' + ev.kind + '">' + esc(ev.statut) + '</span>' +
-          '</div>' +
+        '<div class="event' + (done ? ' done' : '') + '"' + (done ? ' style="opacity:.72"' : '') + '>' +
+          '<div class="event-head"><span class="event-type">' + esc(typeLabel(ev.type)) + '</span>' +
+            '<span class="event-monde" style="color:' + p + '">' + esc(mondeLabel(ev.monde)) + '</span><span class="grow"></span>' +
+            '<span class="status status--' + kind + '">' + esc(statut) + '</span></div>' +
           '<div class="event-title">' + esc(ev.titre) + '</div>' +
-          '<div class="event-lieu">' + PIN + esc(ev.lieu) + '</div>' +
+          (ev.lieu ? '<div class="event-lieu">' + PIN + esc(ev.lieu) + '</div>' : '') +
           (ev.note ? '<div class="event-note">' + esc(ev.note) + '</div>' : '') +
-        '</div>' +
-      '</div>';
+        '</div></div>';
     }).join('');
+    document.getElementById('fil').innerHTML = html ||
+      '<div style="font-size:13.5px;font-style:italic;color:var(--ink2);padding:4px 0 12px;">Aucune mission ni rendez-vous aujourd’hui.</div>';
   }
 
-  function taskRow(t) {
-    var checked = !!state.cochees[t.id];
-    var extras = [];
-    if (t.echue) extras.push('échue ' + t.echeance);
-    else if (t.echeance) extras.push('échéance ' + t.echeance);
+  function taskRow(t, tj) {
+    var checked = !!t.fait, echue = S.statutTache(t, tj) === 'echues';
+    var ech = S.relEcheance(t.date, tj);
+    var extras = []; if (echue && ech) extras.push('échue ' + ech); else if (ech) extras.push('échéance ' + ech);
     var label = t.titre + (extras.length ? ' — ' + extras.join(', ') : '');
-    return '<div class="task compact' + (checked ? ' is-checked' : '') + (t.echue ? ' is-echue' : '') + '"' +
-      ' role="button" tabindex="0" aria-pressed="' + checked + '" data-id="' + esc(t.id) + '" aria-label="' + esc(label) + '">' +
+    return '<div class="task compact' + (checked ? ' is-checked' : '') + (echue ? ' is-echue' : '') + '" role="button" tabindex="0" aria-pressed="' + checked + '" data-id="' + esc(t.id) + '" aria-label="' + esc(label) + '">' +
       '<span class="cb" aria-hidden="true">' + CHECK + '</span>' +
       '<span class="task-title">' + esc(t.titre) + '</span>' +
-      '<span class="echeance">' + esc(t.echeance) + '</span>' +
-    '</div>';
+      '<span class="echeance">' + esc(ech) + '</span></div>';
+  }
+  function tasksForAside(monde) {
+    var t = S.today();
+    return S.tasks().filter(function (x) { if (x.monde !== monde) return false; var st = S.statutTache(x, t); if (x.fait && st === 'echues') return false; return st === 'echues' || st === 'auj'; })
+      .sort(function (a, b) { return (S.statutTache(a, t) === 'echues' ? 0 : 1) - (S.statutTache(b, t) === 'echues' ? 0 : 1); });
   }
   function renderTasks() {
+    var t = S.today();
     var active = document.activeElement;
     var activeId = (active && active.classList && active.classList.contains('task')) ? active.getAttribute('data-id') : null;
-    document.getElementById('tasksEnt').innerHTML = TACHES.entreprise.map(taskRow).join('');
-    document.getElementById('tasksExt').innerHTML = TACHES.exterieur.map(taskRow).join('');
-    if (activeId) {
-      var el = document.querySelector('.task[data-id="' + (window.CSS && CSS.escape ? CSS.escape(activeId) : activeId) + '"]');
-      if (el) el.focus();
+    document.getElementById('tasksEnt').innerHTML = tasksForAside('entreprise').map(function (x) { return taskRow(x, t); }).join('');
+    document.getElementById('tasksExt').innerHTML = tasksForAside('personnel').map(function (x) { return taskRow(x, t); }).join('');
+    if (activeId) { var el = document.querySelector('.task[data-id="' + (window.CSS && CSS.escape ? CSS.escape(activeId) : activeId) + '"]'); if (el) el.focus(); }
+  }
+
+  function renderRappels() {
+    var t = S.today(), out = '';
+    S.onDay(S.ymd(t)).filter(function (x) { return x.type === 'rappel' && !x.fait; }).forEach(function (r) {
+      out += '<div class="rappel info">' + CLOCK + '<div class="txt">Aujourd’hui' + (r.heure ? ' ' + esc(r.heure) : '') + ' : ' + esc(r.titre) + '</div></div>';
+    });
+    var rdvT = S.onDay(S.ymd(S.addDays(t, 1))).filter(function (x) { return x.type === 'rdv' || x.type === 'rappel'; })
+      .sort(function (a, b) { return parseHM(a.heure) - parseHM(b.heure); })[0];
+    if (rdvT) {
+      out += '<div class="rappel info">' + CLOCK + '<div class="txt">Demain' + (rdvT.heure ? ' ' + esc(rdvT.heure) : '') + ' : ' + esc(rdvT.titre) + (rdvT.note ? ' — ' + esc(rdvT.note) : '') + '</div></div>';
     }
+    var nE = S.tasks().filter(function (x) { return x.monde === 'personnel' && !x.fait && S.statutTache(x, t) === 'echues'; }).length;
+    if (nE > 0) out += '<div class="rappel danger">' + ALERT + '<div class="txt">' + nE + ' tâche' + (nE > 1 ? 's' : '') + ' échue' + (nE > 1 ? 's' : '') + ' côté Personnel</div></div>';
+    document.getElementById('rappels').innerHTML = out || '<div style="font-size:13px;color:var(--ink2);font-style:italic;padding:4px 0;">Aucun rappel — tout est calme.</div>';
+    // (le compteur de la cloche est géré globalement par carnet.js)
   }
-  function toggle(id) {
-    if (state.cochees[id]) delete state.cochees[id]; else state.cochees[id] = true;
-    save(); renderTasks();
-  }
+
+  function renderAll() { renderHeader(); renderResume(); renderFil(); renderTasks(); renderRappels(); }
 
   ['tasksEnt', 'tasksExt'].forEach(function (host) {
     var el = document.getElementById(host);
-    el.addEventListener('click', function (e) { var r = e.target.closest('.task'); if (r) toggle(r.getAttribute('data-id')); });
-    el.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { var r = e.target.closest('.task'); if (r) { e.preventDefault(); toggle(r.getAttribute('data-id')); } }
-    });
+    el.addEventListener('click', function (e) { var r = e.target.closest('.task'); if (r) S.toggle(r.getAttribute('data-id')); });
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { var r = e.target.closest('.task'); if (r) { e.preventDefault(); S.toggle(r.getAttribute('data-id')); } } });
   });
 
   var note = document.getElementById('note');
-  note.value = state.note;
-  note.addEventListener('input', function () { state.note = note.value; save(); });
+  note.value = S.note(S.ymd(S.today()));
+  note.addEventListener('input', function () { S.setNote(S.ymd(S.today()), note.value); });
 
-  renderFil();
-  renderTasks();
+  window.addEventListener('carnet:data-changed', function () { renderAll(); if (document.activeElement !== note) note.value = S.note(S.ymd(S.today())); });
+  renderAll();
 })();
 
 </script>
@@ -1145,114 +1261,76 @@ html.night .type-btn.is-active { color: #0B1024; }
 
 (function () {
   'use strict';
-  var esc = window.Carnet.escapeHtml;
-  var STORE = 'carnet.semaine.v1';
-  var NOMS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-  var NUMS = ['6', '7', '8', '9', '10', '11', '12'];
-  var AUJ = 3;
+  var S = window.Carnet.store, esc = window.Carnet.escapeHtml;
+  var offset = 0; // décalage en semaines par rapport à la semaine courante
+  var week = document.getElementById('week');
+  var titleEl = document.getElementById('weekTitre');
 
-  var SEED = [
-    { id: 'l1', jour: 0, genre: 'mission', heure: '06 h – 09 h', titre: 'Bureaux Groupe Ardec, Lyon 3ᵉ', fait: true },
-    { id: 'l2', jour: 0, genre: 'tache', titre: 'Relever les heures des équipes' },
-    { id: 'm1', jour: 1, genre: 'mission', heure: '07 h – 10 h', titre: 'Copropriété Les Peupliers', fait: true },
-    { id: 'm2', jour: 1, genre: 'rdv', heure: '14 h 00', titre: 'Fournisseur Hyprodis, consommables', fait: true },
-    { id: 'w1', jour: 2, genre: 'mission', heure: '14 h – 16 h', titre: 'Brasserie du Parc', fait: true },
-    { id: 'j1', jour: 3, genre: 'mission', heure: '06 h 30 – 08 h 30', titre: 'Vitrerie & sols — Cabinet Vernet & Associés', fait: true },
-    { id: 'j2', jour: 3, genre: 'rdv', heure: '10 h 00', titre: 'Expert-comptable, Fiduciaire du Rhône' },
-    { id: 'j3', jour: 3, genre: 'mission', heure: '14 h – 16 h', titre: 'Fin de chantier — Les Terrasses de Gerland' },
-    { id: 'j4', jour: 3, genre: 'rdv', heure: '17 h 30', titre: 'Visite de site — M. Delorme (Foncia)' },
-    { id: 'j5', jour: 3, genre: 'tache', titre: 'Commander deux monobrosses' },
-    { id: 'v1', jour: 4, genre: 'mission', heure: '06 h 30 – 08 h 30', titre: 'Vitrines — Rue de la République' },
-    { id: 'v2', jour: 4, genre: 'tache', titre: 'Préparer le planning d’août' },
-    { id: 'v3', jour: 4, genre: 'tache', titre: 'Réponse à la mairie de Villeurbanne' },
-    { id: 's1', jour: 5, genre: 'mission', heure: '08 h – 12 h', titre: 'Parties communes — Résidence Les Charmilles' }
-  ];
-
-  var state = load();
-  function load() {
-    try {
-      var raw = localStorage.getItem(STORE);
-      if (raw) {
-        var d = JSON.parse(raw);
-        if (d && Array.isArray(d.blocs) && d.blocs.length) return { blocs: d.blocs };
-      }
-    } catch (e) {}
-    return { blocs: SEED.map(function (b) { return Object.assign({}, b); }) };
-  }
-  function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+  function parseHM(h) { var m = String(h || '').match(/(\d{1,2})\s*h(?:\s*(\d{2}))?/); return m ? (+m[1]) * 60 + (m[2] ? +m[2] : 0) : 9999; }
+  function weekStart() { return S.addDays(S.startOfWeek(S.today()), offset * 7); }
 
   function blocHtml(b) {
-    var tache = b.genre === 'tache';
-    var rdv = b.genre === 'rdv';
+    var tache = b.type === 'tache', rdv = b.type === 'rdv';
     var p = rdv ? 'var(--or-fonce)' : 'var(--entreprise)';
     var rayon = rdv ? '50%' : '2px';
     var cls = 'bloc' + (tache ? ' bloc--task' : '') + (b.fait ? ' done' : '');
-    var lbl = b.titre + ' — ' + NOMS[b.jour] + ' ' + NUMS[b.jour] + ', déplacer';
-    var h = '<div class="' + cls + '" draggable="true" role="button" tabindex="0"'
-      + ' aria-label="' + esc(lbl) + '" data-id="' + esc(b.id) + '">';
-    if (!tache && b.heure) {
-      h += '<div class="bloc-heure"><span class="pas" style="border-radius:' + rayon + ';background:' + p + '"></span><span class="h">' + esc(b.heure) + '</span></div>';
-    }
+    var h = '<div class="' + cls + '" draggable="true" role="button" tabindex="0" aria-label="' + esc(b.titre) + ' — déplacer" data-id="' + esc(b.id) + '">';
+    if (!tache && b.heure) h += '<div class="bloc-heure"><span class="pas" style="border-radius:' + rayon + ';background:' + p + '"></span><span class="h">' + esc(b.heure) + '</span></div>';
     h += '<div class="bloc-body">';
     if (tache) h += '<span class="bloc-check"></span>';
     h += '<span class="bloc-title">' + esc(b.titre) + '</span></div></div>';
     return h;
   }
 
-  function dayHtml(i) {
-    var blocs = state.blocs.filter(function (b) { return b.jour === i; });
-    var nMissions = blocs.filter(function (b) { return b.genre !== 'tache'; }).length;
-    var charge = Math.min(nMissions / 4, 1);
-    var today = i === AUJ;
-    var h = '<div class="day' + (today ? ' today' : '') + '">';
-    h += '<div class="day-head"><span class="day-name">' + NOMS[i] + '</span><span class="day-num">' + NUMS[i] + '</span><span class="grow"></span>' + (today ? '<span class="day-auj">Auj.</span>' : '') + '</div>';
-    h += '<div class="charge"><div class="charge-fill' + (charge >= 0.9 ? ' full' : '') + '" style="width:' + Math.round(charge * 100) + '%"></div></div>';
-    h += '<div class="blocs" data-drop="' + i + '">';
-    h += blocs.length ? blocs.map(blocHtml).join('') : '<div class="day-empty">Rien de prévu.</div>';
-    h += '</div></div>';
-    return h;
-  }
-
-  var week = document.getElementById('week');
   function render() {
-    var h = '';
-    for (var i = 0; i < 7; i++) h += dayHtml(i);
-    week.innerHTML = h;
-  }
+    var start = weekStart(), end = S.addDays(start, 6), tY = S.ymd(S.today());
+    var sameMonth = start.getMonth() === end.getMonth();
+    var accent = start.getDate() + (sameMonth ? '' : ' ' + S.MOIS[start.getMonth()]) + ' au ' + end.getDate() + ' ' + S.MOIS[end.getMonth()];
+    titleEl.innerHTML = 'Semaine du <span class="accent">' + esc(accent) + '</span>';
 
-  function moveBloc(id, jour) {
-    var moved = false;
-    state.blocs = state.blocs.map(function (b) {
-      if (b.id === id && b.jour !== jour) { moved = true; return Object.assign({}, b, { jour: jour }); }
-      return b;
-    });
-    if (moved) {
-      save(); render();
-      var el = week.querySelector('.bloc[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
-      if (el) el.focus();
-      window.Carnet.toast('Déplacé au ' + NOMS[jour].toLowerCase() + ' ' + NUMS[jour] + ' juillet.');
-    }
-  }
-
-  // Alternative tactile / clavier au glisser-déposer : un petit sélecteur de jour.
-  function openMover(id) {
-    var bloc = state.blocs.find(function (b) { return b.id === id; });
-    if (!bloc) return;
-    var opener = document.activeElement;
-    var days = '';
+    var html = '';
     for (var i = 0; i < 7; i++) {
-      var cur = i === bloc.jour;
-      days += '<button type="button" class="date-btn' + (cur ? ' is-active' : '') + '" data-day="' + i + '"'
-        + (cur ? ' disabled aria-disabled="true"' : '') + '>' + NOMS[i] + ' ' + NUMS[i] + '</button>';
+      var day = S.addDays(start, i), dY = S.ymd(day);
+      var items = S.onDay(dY);
+      var evs = items.filter(function (x) { return x.type !== 'tache'; }).sort(function (a, b) { return parseHM(a.heure) - parseHM(b.heure); });
+      var tks = items.filter(function (x) { return x.type === 'tache'; });
+      var blocs = evs.concat(tks);
+      var charge = Math.min(evs.length / 4, 1);
+      var isToday = dY === tY;
+      html += '<div class="day' + (isToday ? ' today' : '') + '">';
+      html += '<div class="day-head"><span class="day-name">' + S.JOURS_AB[day.getDay()] + '</span><span class="day-num">' + day.getDate() + '</span><span class="grow"></span>' + (isToday ? '<span class="day-auj">Auj.</span>' : '') + '</div>';
+      html += '<div class="charge"><div class="charge-fill' + (charge >= 0.9 ? ' full' : '') + '" style="width:' + Math.round(charge * 100) + '%"></div></div>';
+      html += '<div class="blocs" data-drop="' + i + '">';
+      html += blocs.length ? blocs.map(blocHtml).join('') : '<div class="day-empty">Rien de prévu.</div>';
+      html += '</div></div>';
+    }
+    week.innerHTML = html;
+    var tb = document.querySelector('[data-week-today]'); if (tb) tb.classList.toggle('is-active', offset === 0);
+  }
+
+  function moveTo(id, dayIdx) {
+    var day = S.addDays(weekStart(), dayIdx), it = S.byId(id);
+    if (!it || it.date === S.ymd(day)) return;
+    S.reschedule(id, S.ymd(day)); // émet carnet:data-changed → render
+    var el = week.querySelector('.bloc[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]'); if (el) el.focus();
+    window.Carnet.toast('Déplacé au ' + S.JOURS[day.getDay()] + ' ' + day.getDate() + ' ' + S.MOIS[day.getMonth()] + '.');
+  }
+
+  // Sélecteur de jour (tactile / clavier)
+  function openMover(id) {
+    var it = S.byId(id); if (!it) return;
+    var start = weekStart(), opener = document.activeElement, days = '';
+    for (var i = 0; i < 7; i++) {
+      var day = S.addDays(start, i), cur = it.date === S.ymd(day);
+      days += '<button type="button" class="date-btn' + (cur ? ' is-active' : '') + '" data-day="' + i + '"' + (cur ? ' disabled aria-disabled="true"' : '') + '>' + S.JOURS_AB[day.getDay()] + ' ' + day.getDate() + '</button>';
     }
     var ov = document.createElement('div');
     ov.className = 'overlay';
     ov.innerHTML = '<div class="modal modal--confirm" role="dialog" aria-modal="true" aria-label="Déplacer">' +
       '<div class="modal-title sm">Déplacer vers…</div>' +
-      '<div style="margin-top:6px;font-size:13px;font-weight:500;color:var(--ink2);">' + esc(bloc.titre) + '</div>' +
+      '<div style="margin-top:6px;font-size:13px;font-weight:500;color:var(--ink2);">' + esc(it.titre) + '</div>' +
       '<div class="plan-dates" style="margin-top:16px;">' + days + '</div>' +
-      '<div style="display:flex;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--filet);">' +
-        '<button type="button" class="btn btn--ghost" data-cancel style="height:46px;">Annuler</button></div>' +
+      '<div style="display:flex;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--filet);"><button type="button" class="btn btn--ghost" data-cancel style="height:46px;">Annuler</button></div>' +
       '</div>';
     document.body.appendChild(ov);
     var app = document.querySelector('.app'); if (app) { try { app.inert = true; } catch (e) {} }
@@ -1269,44 +1347,24 @@ html.night .type-btn.is-active { color: #0B1024; }
     ov.addEventListener('click', function (e) {
       if (e.target === ov) { close(); return; }
       var d = e.target.closest('[data-day]');
-      if (d && !d.hasAttribute('disabled')) { var j = parseInt(d.getAttribute('data-day'), 10); close(); moveBloc(id, j); return; }
+      if (d && !d.hasAttribute('disabled')) { var j = parseInt(d.getAttribute('data-day'), 10); close(); moveTo(id, j); return; }
       if (e.target.closest('[data-cancel]')) close();
     });
     document.addEventListener('keydown', onKey);
   }
 
-  // Glisser-déposer (souris / trackpad) — délégation sur le conteneur, listeners posés une fois.
-  week.addEventListener('dragstart', function (e) {
-    var b = e.target.closest('.bloc'); if (!b) return;
-    e.dataTransfer.setData('text/plain', b.getAttribute('data-id'));
-    e.dataTransfer.effectAllowed = 'move';
-    b.classList.add('dragging');
-  });
-  week.addEventListener('dragend', function (e) {
-    var b = e.target.closest('.bloc'); if (b) b.classList.remove('dragging');
-  });
+  week.addEventListener('dragstart', function (e) { var b = e.target.closest('.bloc'); if (!b) return; e.dataTransfer.setData('text/plain', b.getAttribute('data-id')); e.dataTransfer.effectAllowed = 'move'; b.classList.add('dragging'); });
+  week.addEventListener('dragend', function (e) { var b = e.target.closest('.bloc'); if (b) b.classList.remove('dragging'); });
   week.addEventListener('dragover', function (e) { if (e.target.closest('[data-drop]')) e.preventDefault(); });
-  week.addEventListener('drop', function (e) {
-    var col = e.target.closest('[data-drop]'); if (!col) return;
-    e.preventDefault();
-    var id = e.dataTransfer.getData('text/plain'); if (!id) return;
-    moveBloc(id, parseInt(col.getAttribute('data-drop'), 10));
-  });
+  week.addEventListener('drop', function (e) { var col = e.target.closest('[data-drop]'); if (!col) return; e.preventDefault(); var id = e.dataTransfer.getData('text/plain'); if (!id) return; moveTo(id, parseInt(col.getAttribute('data-drop'), 10)); });
+  week.addEventListener('click', function (e) { var b = e.target.closest('.bloc'); if (b) openMover(b.getAttribute('data-id')); });
+  week.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { var b = e.target.closest('.bloc'); if (b) { e.preventDefault(); openMover(b.getAttribute('data-id')); } } });
 
-  // Tactile / clavier : taper (ou Entrée/Espace) sur un bloc ouvre le sélecteur de jour.
-  week.addEventListener('click', function (e) {
-    var b = e.target.closest('.bloc'); if (b) openMover(b.getAttribute('data-id'));
-  });
-  week.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-      var b = e.target.closest('.bloc'); if (b) { e.preventDefault(); openMover(b.getAttribute('data-id')); }
-    }
-  });
+  document.querySelector('[data-week-prev]').addEventListener('click', function () { offset--; render(); });
+  document.querySelector('[data-week-next]').addEventListener('click', function () { offset++; render(); });
+  document.querySelector('[data-week-today]').addEventListener('click', function () { offset = 0; render(); });
 
-  // Navigation de semaine (démonstration : une seule semaine chargée)
-  document.querySelector('[data-week-prev]').addEventListener('click', function () { window.Carnet.toast('Semaine précédente — bientôt.'); });
-  document.querySelector('[data-week-next]').addEventListener('click', function () { window.Carnet.toast('Semaine suivante — bientôt.'); });
-
+  window.addEventListener('carnet:data-changed', render);
   render();
 })();
 
@@ -1315,103 +1373,55 @@ html.night .type-btn.is-active { color: #0B1024; }
 
 (function () {
   'use strict';
-  var esc = window.Carnet.escapeHtml;
-  var STORE_KEY = window.Carnet.TACHES_KEY; // 'carnet.taches.v1' — partagé avec le volet Planifier
-
-  var DONNEES = {
-    entreprise: [
-      { id: 'e1', titre: 'Commander deux monobrosses',              groupe: 'auj',    echeance: "aujourd'hui",  prioritaire: true },
-      { id: 'e2', titre: 'Vérifier le matériel du fourgon 2',        groupe: 'auj',    echeance: "aujourd'hui" },
-      { id: 'e3', titre: "Préparer le planning d'août",              groupe: 'avenir', echeance: 'vendredi',      prioritaire: true },
-      { id: 'e4', titre: 'Appeler Karim pour son entretien annuel',  groupe: 'avenir', echeance: 'cette semaine' },
-      { id: 'e5', titre: 'Relever les heures des équipes',           groupe: 'avenir', echeance: 'lundi',         recurrence: 'chaque lundi' },
-      { id: 'e6', titre: 'Réorganiser le local de stockage',         groupe: 'unjour', echeance: '' }
-    ],
-    exterieur: [
-      { id: 'x1', titre: 'Déposer le dossier à la banque',           groupe: 'echues', echeance: 'depuis hier',   prioritaire: true },
-      { id: 'x2', titre: 'Prendre RDV contrôle technique fourgon',   groupe: 'echues', echeance: 'depuis mardi' },
-      { id: 'x3', titre: 'Récupérer les tenues brodées',             groupe: 'auj',    echeance: "aujourd'hui" },
-      { id: 'x4', titre: 'Réponse à la mairie de Villeurbanne',      groupe: 'avenir', echeance: 'avant vendredi', prioritaire: true },
-      { id: 'x5', titre: 'Passage chez Hyprodis, consommables',      groupe: 'avenir', echeance: 'le 20',          recurrence: 'chaque mois' },
-      { id: 'x6', titre: 'Comparer les assurances des fourgons',     groupe: 'unjour', echeance: '' }
-    ]
-  };
-
+  var S = window.Carnet.store, esc = window.Carnet.escapeHtml;
   var GROUPES = [
-    { cle: 'echues',  nom: 'Échues' },
-    { cle: 'auj',     nom: "Aujourd'hui" },
-    { cle: 'avenir',  nom: 'À venir' },
-    { cle: 'unjour',  nom: 'Un jour' }
+    { cle: 'echues', nom: 'Échues' },
+    { cle: 'auj', nom: "Aujourd'hui" },
+    { cle: 'avenir', nom: 'À venir' },
+    { cle: 'unjour', nom: 'Un jour' }
   ];
+  var MONDE = { entreprise: 'entreprise', exterieur: 'personnel' }; // clé DOM → monde réel
 
   var CHECK_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
   var RECUR_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2v4h-4M7 22v-4h4"></path><path d="M20.5 11a8.5 8.5 0 0 0-14.9-4.5M3.5 13a8.5 8.5 0 0 0 14.9 4.5"></path></svg>';
 
-  var state = load();
-  function load() {
-    var base = { cochees: {}, ajouts: { entreprise: [], exterieur: [] } };
-    try {
-      var raw = localStorage.getItem(STORE_KEY);
-      if (!raw) return base;
-      var d = JSON.parse(raw);
-      if (d && typeof d === 'object') {
-        base.cochees = (d.cochees && typeof d.cochees === 'object') ? d.cochees : {};
-        if (d.ajouts && typeof d.ajouts === 'object') {
-          base.ajouts.entreprise = sanitize(d.ajouts.entreprise);
-          base.ajouts.exterieur = sanitize(d.ajouts.exterieur);
-        }
-      }
-    } catch (e) {}
-    return base;
-  }
-  function sanitize(arr) {
-    if (!Array.isArray(arr)) return [];
-    return arr.filter(function (t) { return t && typeof t.id === 'string' && typeof t.titre === 'string'; })
-      .map(function (t) {
-        return {
-          id: t.id, titre: t.titre,
-          groupe: GROUPES.some(function (g) { return g.cle === t.groupe; }) ? t.groupe : 'auj',
-          echeance: typeof t.echeance === 'string' ? t.echeance : "aujourd'hui",
-          prioritaire: !!t.prioritaire,
-          recurrence: typeof t.recurrence === 'string' ? t.recurrence : undefined
-        };
-      });
-  }
-  function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+  function tasksOf(cle) { var m = MONDE[cle]; return S.tasks().filter(function (t) { return t.monde === m; }); }
+  function restantes(cle) { return tasksOf(cle).filter(function (t) { return !t.fait; }).length; }
 
-  function tasksOf(cle) { return DONNEES[cle].concat(state.ajouts[cle]); }
-  function restantes(cle) { return tasksOf(cle).filter(function (t) { return !state.cochees[t.id]; }).length; }
-
-  function taskRow(t) {
-    var checked = !!state.cochees[t.id];
-    var echue = t.groupe === 'echues';
+  function taskRow(t, tj) {
+    var echue = S.statutTache(t, tj) === 'echues';
+    var checked = !!t.fait;
+    var ech = S.relEcheance(t.date, tj);
     var cls = 'task' + (checked ? ' is-checked' : '') + (echue ? ' is-echue' : '');
     var extras = [];
-    if (t.prioritaire) extras.push('prioritaire');
-    if (t.echeance) extras.push((echue ? 'échue ' : 'échéance ') + t.echeance);
-    if (t.recurrence) extras.push(t.recurrence);
+    if (t.prio) extras.push('prioritaire');
+    if (ech) extras.push((echue ? 'échue ' : 'échéance ') + ech);
+    if (t.recur) extras.push(t.recur);
     var label = t.titre + (extras.length ? ' — ' + extras.join(', ') : '');
     var html = '<div class="' + cls + '" role="button" tabindex="0" aria-pressed="' + checked + '"'
       + ' data-id="' + esc(t.id) + '" aria-label="' + esc(label) + '">';
     html += '<span class="cb" aria-hidden="true">' + CHECK_SVG + '</span>';
-    if (t.prioritaire) html += '<span class="prio" aria-hidden="true"></span>';
+    if (t.prio) html += '<span class="prio" aria-hidden="true"></span>';
     html += '<span class="task-title">' + esc(t.titre) + '</span>';
-    if (t.recurrence) html += '<span class="recur" aria-hidden="true">' + RECUR_SVG + esc(t.recurrence) + '</span>';
-    if (t.echeance) html += '<span class="echeance">' + esc(t.echeance) + '</span>';
+    if (t.recur) html += '<span class="recur" aria-hidden="true">' + RECUR_SVG + esc(t.recur) + '</span>';
+    if (ech) html += '<span class="echeance">' + esc(ech) + '</span>';
     html += '</div>';
     return html;
   }
 
   function renderRegister(cle) {
+    var tj = S.today();
     var body = document.querySelector('[data-body="' + cle + '"]');
     var all = tasksOf(cle);
     var prev = body.scrollTop;
     var html = '';
     GROUPES.forEach(function (g) {
-      var ts = all.filter(function (t) { return t.groupe === g.cle; });
+      var ts = all.filter(function (t) { var st = S.statutTache(t, tj); if (t.fait && st === 'echues') return false; return st === g.cle; });
+      ts.sort(function (a, b) { var da = a.date || '9999', db = b.date || '9999'; return da < db ? -1 : (da > db ? 1 : 0); });
       if (!ts.length) return;
       html += '<div class="group"><div class="group-head' + (g.cle === 'echues' ? ' is-echues' : '') + '">'
-        + '<span class="label">' + g.nom + '</span><span class="rule"></span></div>' + ts.map(taskRow).join('') + '</div>';
+        + '<span class="label">' + g.nom + '</span><span class="rule"></span></div>'
+        + ts.map(function (t) { return taskRow(t, tj); }).join('') + '</div>';
     });
     body.innerHTML = html;
     body.scrollTop = prev;
@@ -1419,8 +1429,9 @@ html.night .type-btn.is-active { color: #0B1024; }
   }
 
   function renderResume() {
+    var tj = S.today();
     var open = restantes('entreprise') + restantes('exterieur');
-    var nE = tasksOf('exterieur').filter(function (t) { return t.groupe === 'echues' && !state.cochees[t.id]; }).length;
+    var nE = tasksOf('exterieur').filter(function (t) { return !t.fait && S.statutTache(t, tj) === 'echues'; }).length;
     var p1 = open + ' tâche' + (open > 1 ? 's' : '') + ' ouverte' + (open > 1 ? 's' : '');
     var p2 = nE > 0 ? (nE + ' échue' + (nE > 1 ? 's' : '') + ' côté Personnel') : 'aucune échue côté Personnel';
     document.getElementById('resume').textContent = p1 + ' · ' + p2;
@@ -1436,24 +1447,18 @@ html.night .type-btn.is-active { color: #0B1024; }
     }
   }
 
-  function toggle(id) {
-    if (state.cochees[id]) delete state.cochees[id]; else state.cochees[id] = true;
-    save(); renderAll();
-  }
   function addTask(cle, titre) {
     titre = (titre || '').trim();
     if (!titre) return false;
-    var id = cle + '-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
-    state.ajouts[cle].push({ id: id, titre: titre, groupe: 'auj', echeance: "aujourd'hui" });
-    save(); renderAll();
+    S.add({ type: 'tache', monde: MONDE[cle], titre: titre, date: S.ymd(S.today()) });
     return true;
   }
 
   ['entreprise', 'exterieur'].forEach(function (cle) {
     var body = document.querySelector('[data-body="' + cle + '"]');
-    body.addEventListener('click', function (e) { var r = e.target.closest('.task'); if (r) toggle(r.getAttribute('data-id')); });
+    body.addEventListener('click', function (e) { var r = e.target.closest('.task'); if (r) S.toggle(r.getAttribute('data-id')); });
     body.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { var r = e.target.closest('.task'); if (r) { e.preventDefault(); toggle(r.getAttribute('data-id')); } }
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { var r = e.target.closest('.task'); if (r) { e.preventDefault(); S.toggle(r.getAttribute('data-id')); } }
     });
     var addInput = document.querySelector('[data-add="' + cle + '"]');
     addInput.addEventListener('keydown', function (e) {
@@ -1461,9 +1466,7 @@ html.night .type-btn.is-active { color: #0B1024; }
     });
   });
 
-  // Rafraîchit quand le volet Planifier ajoute une tâche (même onglet).
-  window.addEventListener('carnet:taches-changed', function () { state = load(); renderAll(); });
-
+  window.addEventListener('carnet:data-changed', renderAll);
   renderAll();
 })();
 
@@ -1472,41 +1475,58 @@ html.night .type-btn.is-active { color: #0B1024; }
 
 (function () {
   'use strict';
-  var esc = window.Carnet.escapeHtml;
-
-  var PAGES = [
-    {
-      date: 'Mercredi 8 juillet', rel: 'Hier', bilan: '1 mission · 6 tâches accomplies', portee: 'hier',
-      entrees: [
-        { heure: '16 h 10', type: 'Mission', texte: 'Brasserie du Parc — terminée à 16 h 10' },
-        { heure: '—', type: 'Tâches', texte: '6 tâches accomplies, 2 reportées à aujourd’hui' }
-      ],
-      note: 'Penser à repasser voir le chantier de Gerland en fin de semaine.'
-    },
-    {
-      date: 'Mardi 7 juillet', rel: 'Cette semaine', bilan: '1 mission · 1 rendez-vous · 4 tâches', portee: 'semaine',
-      entrees: [
-        { heure: '10 h 05', type: 'Mission', texte: 'Copropriété Les Peupliers — terminée à 10 h 05' },
-        { heure: '14 h 00', type: 'Rendez-vous', texte: 'Fournisseur Hyprodis — honoré, commande de consommables passée' },
-        { heure: '—', type: 'Tâches', texte: '4 tâches accomplies' }
-      ],
-      note: ''
-    },
-    {
-      date: 'Lundi 6 juillet', rel: 'Cette semaine', bilan: '1 mission · 3 tâches accomplies', portee: 'semaine',
-      entrees: [
-        { heure: '09 h 15', type: 'Mission', texte: 'Bureaux Groupe Ardec, Lyon 3ᵉ — terminée à 9 h 15' },
-        { heure: '—', type: 'Tâches', texte: '3 tâches accomplies, dont les heures des équipes' }
-      ],
-      note: 'Semaine chargée : caler les congés d’août avant vendredi.'
-    }
-  ];
-
+  var S = window.Carnet.store, esc = window.Carnet.escapeHtml, cap = window.Carnet.cap;
   var FILTRES = [{ cle: 'hier', nom: 'Hier' }, { cle: 'semaine', nom: 'Cette semaine' }, { cle: 'mois', nom: 'Ce mois' }];
   var CHECK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
-  var TYPE_CLS = { 'Mission': 'mission', 'Rendez-vous': 'rdv', 'Tâches': 'taches' };
-
   var filtre = 'semaine';
+
+  function typeLabel(t) { return t === 'mission' ? 'Mission' : (t === 'rdv' ? 'Rendez-vous' : 'Tâches'); }
+  function typeCls(t) { return t === 'mission' ? 'mission' : (t === 'rdv' ? 'rdv' : 'taches'); }
+
+  // Jours passés (avant aujourd'hui) ayant du réalisé ou une note, dans la portée du filtre.
+  function collectDates() {
+    var t = S.today(), tY = S.ymd(t), from;
+    if (filtre === 'hier') from = S.ymd(S.addDays(t, -1));
+    else if (filtre === 'semaine') from = S.ymd(S.startOfWeek(t));
+    else from = tY.slice(0, 8) + '01'; // 1er du mois courant
+    var map = {}, set = {};
+    S.all().forEach(function (it) {
+      if (it.fait && it.date && it.date >= from && it.date < tY) { (map[it.date] = map[it.date] || []).push(it); set[it.date] = 1; }
+    });
+    var cur = S.parseYmd(from), stop = S.addDays(t, -1);
+    while (S.ymd(cur) <= S.ymd(stop)) { var y = S.ymd(cur); if (S.note(y) && !set[y]) set[y] = 1; cur = S.addDays(cur, 1); }
+    var dates = Object.keys(set).sort();
+    dates.reverse();
+    return dates.map(function (y) { return { y: y, items: map[y] || [] }; });
+  }
+
+  function pageHtml(pg, t) {
+    var y = pg.y, items = pg.items, d = S.parseYmd(y);
+    var rel = S.diffDays(y, S.ymd(t)) === -1 ? 'Hier' : (y >= S.ymd(S.startOfWeek(t)) ? 'Cette semaine' : 'Ce mois');
+    var miss = items.filter(function (x) { return x.type === 'mission'; });
+    var rdvs = items.filter(function (x) { return x.type === 'rdv'; });
+    var tks = items.filter(function (x) { return x.type === 'tache'; });
+    var parts = [];
+    if (miss.length) parts.push(miss.length + ' mission' + (miss.length > 1 ? 's' : ''));
+    if (rdvs.length) parts.push(rdvs.length + ' rendez-vous');
+    if (tks.length) parts.push(tks.length + ' tâche' + (tks.length > 1 ? 's' : '') + ' accomplie' + (tks.length > 1 ? 's' : ''));
+    var bilan = parts.join(' · ');
+    var entrees = [];
+    miss.forEach(function (m) { entrees.push({ heure: m.faitHeure || '—', type: 'mission', texte: m.titre + (m.faitHeure ? ' — terminée à ' + m.faitHeure : ' — terminée') }); });
+    rdvs.forEach(function (r) { entrees.push({ heure: r.heure || '—', type: 'rdv', texte: r.titre + ' — honoré' }); });
+    if (tks.length) entrees.push({ heure: '—', type: 'tache', texte: tks.length + ' tâche' + (tks.length > 1 ? 's' : '') + ' accomplie' + (tks.length > 1 ? 's' : '') });
+    var note = S.note(y);
+    var entriesHtml = entrees.map(function (e) {
+      return '<div class="entry"><span class="entry-time">' + esc(e.heure) + '</span><span class="entry-icon">' + CHECK + '</span>' +
+        '<span class="entry-text"><span class="entry-type ' + typeCls(e.type) + '">' + esc(typeLabel(e.type)) + '</span>' + esc(e.texte) + '</span></div>';
+    }).join('');
+    var noteHtml = note ? '<div class="note-inline"><span class="lab">Note du jour</span>' + esc(note) + '</div>' : '';
+    var dateStr = cap(S.JOURS[d.getDay()]) + ' ' + d.getDate() + ' ' + S.MOIS[d.getMonth()];
+    return '<article class="page"><div class="page-row"><h2 class="page-date">' + esc(dateStr) + '</h2>' +
+      '<span class="page-rel">' + esc(rel) + '</span><span class="grow"></span>' +
+      '<span class="page-bilan">' + esc(bilan) + '</span></div>' +
+      '<div class="entries">' + entriesHtml + noteHtml + '</div></article>';
+  }
 
   function renderFiltres() {
     document.getElementById('filters').innerHTML = FILTRES.map(function (f) {
@@ -1514,37 +1534,18 @@ html.night .type-btn.is-active { color: #0B1024; }
       return '<button type="button" class="chip' + (actif ? ' is-active-marine' : '') + '" data-filtre="' + f.cle + '" aria-pressed="' + actif + '">' + esc(f.nom) + '</button>';
     }).join('');
   }
-
-  function pageHtml(p) {
-    var entrees = p.entrees.map(function (e) {
-      return '<div class="entry">' +
-        '<span class="entry-time">' + esc(e.heure) + '</span>' +
-        '<span class="entry-icon">' + CHECK + '</span>' +
-        '<span class="entry-text"><span class="entry-type ' + (TYPE_CLS[e.type] || 'taches') + '">' + esc(e.type) + '</span>' + esc(e.texte) + '</span>' +
-      '</div>';
-    }).join('');
-    var note = p.note ? '<div class="note-inline"><span class="lab">Note du jour</span>' + esc(p.note) + '</div>' : '';
-    return '<article class="page">' +
-      '<div class="page-row"><h2 class="page-date">' + esc(p.date) + '</h2>' +
-        '<span class="page-rel">' + esc(p.rel) + '</span><span class="grow"></span>' +
-        '<span class="page-bilan">' + esc(p.bilan) + '</span></div>' +
-      '<div class="entries">' + entrees + note + '</div>' +
-    '</article>';
-  }
-
   function render() {
-    var source = filtre === 'hier' ? PAGES.filter(function (p) { return p.portee === 'hier'; }) : PAGES;
-    document.getElementById('pages').innerHTML =
-      source.map(pageHtml).join('') +
-      '<div class="journal-end">Début du carnet — semaine du 6 juillet.</div>';
+    var t = S.today(), pgs = collectDates();
+    document.getElementById('pages').innerHTML = pgs.length
+      ? pgs.map(function (p) { return pageHtml(p, t); }).join('') + '<div class="journal-end">Début du carnet.</div>'
+      : '<div class="journal-end" style="padding-top:48px;">Rien encore consigné sur cette période.<br>Terminez une mission ou cochez des tâches — elles s’inscriront ici, jour après jour.</div>';
   }
 
   document.getElementById('filters').addEventListener('click', function (e) {
     var b = e.target.closest('[data-filtre]'); if (!b) return;
-    filtre = b.getAttribute('data-filtre');
-    renderFiltres(); render();
+    filtre = b.getAttribute('data-filtre'); renderFiltres(); render();
   });
-
+  window.addEventListener('carnet:data-changed', render);
   renderFiltres();
   render();
 })();
