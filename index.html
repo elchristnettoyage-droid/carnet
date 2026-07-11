@@ -11,6 +11,7 @@
 <meta name="color-scheme" content="light dark">
 <title>Carnet</title>
 <script>try{if(localStorage.getItem("carnet.night")==="1")document.documentElement.classList.add("night");}catch(e){}</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 </head>
 <body>
 <style>
