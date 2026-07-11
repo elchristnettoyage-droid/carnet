@@ -704,7 +704,7 @@ html.night .type-btn.is-active { color: #0B1024; }
   'use strict';
 
   var THEME_KEY = 'carnet.night';
-  var DATA_KEY = 'carnet.data.v1';
+  var DATA_KEY = 'carnet.data.v2'; // v2 : carnet vierge (remet à zéro les anciennes données d'exemple)
 
   /* ── Stockage sûr ── */
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -792,8 +792,7 @@ html.night .type-btn.is-active { color: #0B1024; }
     if (_data) return _data;
     _data = loadData();
     if (!_data.seeded) {
-      _data.items = seedItems();
-      _data.notes[ymd(today())] = "Voir avec Sofiane pour l'échange de tournée de vendredi.";
+      _data.items = seedItems(); // vide : carnet vierge
       _data.seeded = true; persist(false);
     }
     return _data;
@@ -833,8 +832,12 @@ html.night .type-btn.is-active { color: #0B1024; }
     setNote: function (dateY, txt) { data().notes[dateY] = txt; persist(false); }
   };
 
-  // Amorçage : jeu d'exemple RELATIF à aujourd'hui (l'app paraît toujours à jour)
+  // Carnet VIERGE : aucun exemple. Le dirigeant saisit ses propres missions,
+  // rendez-vous et tâches (via « + Planifier » et les champs d'ajout).
   function seedItems() {
+    return [];
+  }
+  function _seedItemsExemplesInutilises() {
     var t = today();
     function d(off) { return ymd(addDays(t, off)); }
     // lundi de la semaine prochaine, pour ancrer un hebdomadaire
@@ -1423,7 +1426,7 @@ html.night .type-btn.is-active { color: #0B1024; }
         + '<span class="label">' + g.nom + '</span><span class="rule"></span></div>'
         + ts.map(function (t) { return taskRow(t, tj); }).join('') + '</div>';
     });
-    body.innerHTML = html;
+    body.innerHTML = html || '<div style="font-size:13.5px;font-style:italic;color:var(--ink2);padding:16px 2px;">Aucune tâche pour le moment. Ajoutez-en ci-dessous.</div>';
     body.scrollTop = prev;
     document.querySelector('[data-count="' + cle + '"]').textContent = restantes(cle) + ' à faire';
   }
