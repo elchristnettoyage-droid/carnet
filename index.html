@@ -536,6 +536,7 @@ html.night .type-btn.is-active { color: #0B1024; }
 <div id="loginGate" class="login-page">
   <div class="login-card">
     <div class="login-brand">Carnet</div><div class="login-rule"></div>
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;color:var(--ink);margin-bottom:6px;">HOUNKPONOU Ayétundé Christian</div>
     <div class="login-sub">Journal de bord personnel</div>
     <form class="login-form" id="loginForm">
       <div class="field-label" style="margin-bottom:8px;">Code personnel</div>
@@ -574,12 +575,12 @@ html.night .type-btn.is-active { color: #0B1024; }
       <div style="display:flex;align-items:flex-end;gap:24px;flex:none;">
         <div>
           <h1 class="page-title big" id="jourTitre">Jeudi <span class="accent">9 juillet</span></h1>
-          <p class="page-sub" style="font-size:14.5px;">Bonjour. Voici votre journée.</p>
+          <p class="page-sub" style="font-size:14.5px;">Bonjour Christian. Voici votre journée.</p>
         </div>
         <span class="grow"></span>
         <div style="display:flex;align-items:center;gap:8px;padding-bottom:6px;font-size:13px;font-weight:600;color:var(--ink2);">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C08C54" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2.5v2M12 19.5v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.5 12h2M19.5 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
-          Lyon · 26°, ensoleillé
+          Paris · 24°, ensoleillé
         </div>
       </div>
 
@@ -1103,7 +1104,7 @@ html.night .type-btn.is-active { color: #0B1024; }
     var t = today();
     var lng = cap(frLong(t));
     document.querySelectorAll('[data-today-long]').forEach(function (el) { el.textContent = lng; });
-    document.querySelectorAll('[data-today-lieu]').forEach(function (el) { el.textContent = lng + ' · Lyon'; });
+    document.querySelectorAll('[data-today-lieu]').forEach(function (el) { el.textContent = lng + ' · Paris'; });
   }
 
   // Compteur de la cloche, partagé par tous les écrans : RDV/rappel de demain + retards Personnel.
