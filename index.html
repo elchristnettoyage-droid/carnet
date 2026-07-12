@@ -945,8 +945,9 @@ html.night .type-btn.is-active { color: #0B1024; }
               fait?:bool, faitHeure? }
      ══════════════════════════════════════════════════════════════════ */
   var _data = null;
+  function nowMs() { return Date.now(); }
   function loadData() {
-    var base = { items: [], notes: {}, fiches: { clients: [], fournisseurs: [], equipe: [] }, seeded: false };
+    var base = { items: [], notes: {}, fiches: { clients: [], fournisseurs: [], equipe: [] }, seeded: false, tomb: {}, notesM: {} };
     try {
       var raw = lsGet(DATA_KEY);
       if (raw) {
@@ -958,6 +959,8 @@ html.night .type-btn.is-active { color: #0B1024; }
             ['clients', 'fournisseurs', 'equipe'].forEach(function (k) { if (Array.isArray(d.fiches[k])) base.fiches[k] = d.fiches[k]; });
           }
           base.seeded = !!d.seeded;
+          if (d.tomb && typeof d.tomb === 'object') base.tomb = d.tomb;
+          if (d.notesM && typeof d.notesM === 'object') base.notesM = d.notesM;
         }
       }
     } catch (e) {}
@@ -973,8 +976,10 @@ html.night .type-btn.is-active { color: #0B1024; }
     return _data;
   }
   function persist(emit) {
-    lsSet(DATA_KEY, JSON.stringify({ items: _data.items, notes: _data.notes, fiches: _data.fiches, seeded: _data.seeded }));
+    lsSet(DATA_KEY, JSON.stringify({ items: _data.items, notes: _data.notes, fiches: _data.fiches, seeded: _data.seeded, tomb: _data.tomb || {}, notesM: _data.notesM || {} }));
     if (emit !== false) { try { window.dispatchEvent(new CustomEvent('carnet:data-changed')); } catch (e) {} }
+    // Toute écriture locale est proposée à la synchro (si activée).
+    try { window.dispatchEvent(new CustomEvent('carnet:local-write')); } catch (e) {}
   }
 
   var store = {
@@ -985,18 +990,19 @@ html.night .type-btn.is-active { color: #0B1024; }
     MOIS: MOIS, JOURS: JOURS, JOURS_AB: JOURS_AB,
     all: function () { return data().items; },
     byId: function (id) { return data().items.filter(function (x) { return x.id === id; })[0] || null; },
-    add: function (it) { it.id = it.id || uid(it.type); data().items.push(it); persist(); return it; },
-    update: function (id, patch) { var it = this.byId(id); if (it) { for (var k in patch) it[k] = patch[k]; persist(); } return it; },
+    add: function (it) { it.id = it.id || uid(it.type); it._m = nowMs(); data().items.push(it); persist(); return it; },
+    update: function (id, patch) { var it = this.byId(id); if (it) { for (var k in patch) it[k] = patch[k]; it._m = nowMs(); persist(); } return it; },
     toggle: function (id) {
       var it = this.byId(id);
       if (it) {
         it.fait = !it.fait;
         if (it.fait && !it.faitHeure && (it.type === 'mission' || it.type === 'rdv')) it.faitHeure = it.fin || it.heure || '';
+        it._m = nowMs();
         persist();
       }
       return it;
     },
-    remove: function (id) { data().items = data().items.filter(function (x) { return x.id !== id; }); persist(); },
+    remove: function (id) { var d = data(); d.tomb[id] = nowMs(); d.items = d.items.filter(function (x) { return x.id !== id; }); persist(); },
     reschedule: function (id, dateY) { return this.update(id, { date: dateY }); },
     onDay: function (dateY) { return data().items.filter(function (x) { return x.date === dateY; }); },
     inRange: function (aY, bY) { return data().items.filter(function (x) { return x.date && x.date >= aY && x.date <= bY; }); },
@@ -1004,13 +1010,13 @@ html.night .type-btn.is-active { color: #0B1024; }
     note: function (dateY) { return data().notes[dateY] || ''; },
     // Pas d'émission : la note du jour n'affecte aucun autre écran → évite de
     // reconstruire les listes (et de déplacer le curseur) à chaque frappe.
-    setNote: function (dateY, txt) { data().notes[dateY] = txt; persist(false); },
+    setNote: function (dateY, txt) { var d = data(); d.notes[dateY] = txt; d.notesM[dateY] = nowMs(); persist(false); },
 
     // Fiches (répertoire) : cat ∈ 'clients' | 'fournisseurs' | 'equipe'
     fiches: function (cat) { return data().fiches[cat] || []; },
-    addFiche: function (cat, o) { o.id = o.id || uid('f'); data().fiches[cat].push(o); persist(); return o; },
-    updateFiche: function (cat, id, patch) { var l = data().fiches[cat] || []; for (var i = 0; i < l.length; i++) { if (l[i].id === id) { for (var k in patch) l[i][k] = patch[k]; break; } } persist(); },
-    removeFiche: function (cat, id) { data().fiches[cat] = (data().fiches[cat] || []).filter(function (x) { return x.id !== id; }); persist(); },
+    addFiche: function (cat, o) { o.id = o.id || uid('f'); o._m = nowMs(); o._cat = cat; data().fiches[cat].push(o); persist(); return o; },
+    updateFiche: function (cat, id, patch) { var l = data().fiches[cat] || []; for (var i = 0; i < l.length; i++) { if (l[i].id === id) { for (var k in patch) l[i][k] = patch[k]; l[i]._m = nowMs(); break; } } persist(); },
+    removeFiche: function (cat, id) { var d = data(); d.tomb[id] = nowMs(); d.fiches[cat] = (d.fiches[cat] || []).filter(function (x) { return x.id !== id; }); persist(); },
 
     // Sauvegarde
     exportObject: function () { var d = data(); return { app: 'carnet', version: 1, exportedAt: ymd(today()), data: { items: d.items, notes: d.notes, fiches: d.fiches, seeded: true }, night: lsGet(THEME_KEY) === '1' }; },
@@ -1018,17 +1024,86 @@ html.night .type-btn.is-active { color: #0B1024; }
       if (!obj || typeof obj !== 'object') throw new Error('Fichier invalide');
       var d = obj.data || obj;
       if (!d || !Array.isArray(d.items)) throw new Error('Sauvegarde non reconnue');
+      var nm = nowMs();
       _data = {
         items: d.items,
         notes: (d.notes && typeof d.notes === 'object') ? d.notes : {},
         fiches: { clients: [], fournisseurs: [], equipe: [] },
-        seeded: true
+        seeded: true, tomb: {}, notesM: {}
       };
       if (d.fiches) { ['clients', 'fournisseurs', 'equipe'].forEach(function (k) { if (Array.isArray(d.fiches[k])) _data.fiches[k] = d.fiches[k]; }); }
+      // Horodate tout ce qui est importé pour qu'il l'emporte lors de la fusion.
+      _data.items.forEach(function (x) { if (x) x._m = nm; });
+      ['clients', 'fournisseurs', 'equipe'].forEach(function (c) { _data.fiches[c].forEach(function (f) { if (f) f._m = nm; }); });
+      Object.keys(_data.notes).forEach(function (k) { _data.notesM[k] = nm; });
       if (typeof obj.night === 'boolean') lsSet(THEME_KEY, obj.night ? '1' : '0');
       persist();
     },
-    clearAll: function () { _data = { items: [], notes: {}, fiches: { clients: [], fournisseurs: [], equipe: [] }, seeded: true }; persist(); }
+    clearAll: function () {
+      var d = data(); var tomb = d.tomb || {}; var nm = nowMs();
+      d.items.forEach(function (x) { if (x.id) tomb[x.id] = nm; });
+      ['clients', 'fournisseurs', 'equipe'].forEach(function (c) { (d.fiches[c] || []).forEach(function (f) { if (f.id) tomb[f.id] = nm; }); });
+      var notesM = {}; Object.keys(d.notes || {}).forEach(function (k) { notesM[k] = nm; });
+      _data = { items: [], notes: {}, fiches: { clients: [], fournisseurs: [], equipe: [] }, seeded: true, tomb: tomb, notesM: notesM };
+      persist();
+    },
+
+    // ── Synchronisation : document complet + fusion sans perte ──
+    // Chaque élément porte _m (dernière modif) ; les suppressions laissent une
+    // pierre tombale (tomb) horodatée. La fusion prend l'élément le plus récent
+    // et applique les suppressions — deux appareils ne s'écrasent jamais.
+    exportDoc: function () { var d = data(); return { items: d.items, notes: d.notes, fiches: d.fiches, tomb: d.tomb || {}, notesM: d.notesM || {}, seeded: true }; },
+    mergeRemote: function (r) {
+      if (!r || typeof r !== 'object') return false;
+      var d = data();
+      var changed = false;
+      // Pierres tombales : max des deux côtés.
+      var tomb = {}; var srcT = [d.tomb || {}, r.tomb || {}];
+      srcT.forEach(function (t) { for (var id in t) { if (!tomb[id] || t[id] > tomb[id]) tomb[id] = t[id]; } });
+      // Items : union par id, on garde le _m le plus grand ; supprimé si tomb plus récent.
+      function mergeList(localArr, remoteArr) {
+        var by = {}, out = [];
+        (localArr || []).forEach(function (x) { if (x && x.id) by[x.id] = x; });
+        (remoteArr || []).forEach(function (x) {
+          if (!x || !x.id) return;
+          var ex = by[x.id];
+          if (!ex || (x._m || 0) > (ex._m || 0)) by[x.id] = x;
+        });
+        for (var id in by) {
+          var it = by[id];
+          if (tomb[id] && tomb[id] >= (it._m || 0)) continue; // supprimé
+          out.push(it);
+        }
+        return out;
+      }
+      var newItems = mergeList(d.items, r.items);
+      var newFiches = { clients: [], fournisseurs: [], equipe: [] };
+      ['clients', 'fournisseurs', 'equipe'].forEach(function (c) { newFiches[c] = mergeList(d.fiches[c], (r.fiches || {})[c]); });
+      // Notes : par date, la version au notesM le plus grand gagne.
+      var notes = {}, notesM = {};
+      var dates = {};
+      Object.keys(d.notes || {}).forEach(function (k) { dates[k] = 1; });
+      Object.keys(r.notes || {}).forEach(function (k) { dates[k] = 1; });
+      Object.keys(d.notesM || {}).forEach(function (k) { dates[k] = 1; });
+      Object.keys((r.notesM || {})).forEach(function (k) { dates[k] = 1; });
+      Object.keys(dates).forEach(function (k) {
+        var lm = (d.notesM || {})[k] || 0, rm = (r.notesM || {})[k] || 0;
+        var pick = rm > lm ? r : d;
+        var pm = Math.max(lm, rm);
+        var val = (pick.notes || {})[k];
+        notesM[k] = pm;
+        if (val) notes[k] = val; // valeur vide = note effacée
+      });
+      // A-t-on réellement changé quelque chose côté local ?
+      var before = JSON.stringify({ i: d.items, f: d.fiches, n: d.notes, t: d.tomb });
+      _data.items = newItems; _data.fiches = newFiches; _data.notes = notes; _data.notesM = notesM; _data.tomb = tomb; _data.seeded = true;
+      var after = JSON.stringify({ i: _data.items, f: _data.fiches, n: _data.notes, t: _data.tomb });
+      changed = before !== after;
+      // Persiste sans re-déclencher un push (émission d'un événement dédié).
+      lsSet(DATA_KEY, JSON.stringify({ items: _data.items, notes: _data.notes, fiches: _data.fiches, seeded: true, tomb: _data.tomb, notesM: _data.notesM }));
+      if (changed) { try { window.dispatchEvent(new CustomEvent('carnet:data-changed')); } catch (e) {} }
+      return changed;
+    }
   };
 
   // Carnet VIERGE : aucun exemple. Le dirigeant saisit ses propres missions,
@@ -1358,6 +1433,7 @@ html.night .type-btn.is-active { color: #0B1024; }
         '<span style="flex:1;font-size:13.5px;font-weight:600;color:var(--ink);">Mode nuit — après les heures</span>' +
         '<button type="button" class="btn btn--ghost" data-night style="height:40px;">' + (isNight() ? 'Revenir au jour' : 'Activer') + '</button>' +
       '</div>' +
+      '<div data-syncsec style="margin-top:16px;padding-bottom:16px;border-bottom:1px solid var(--filet);"></div>' +
       '<div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;">' +
         '<button type="button" class="btn btn--primary" data-export style="width:100%;">Exporter une sauvegarde</button>' +
         '<button type="button" class="btn btn--ghost" data-importbtn style="width:100%;">Importer une sauvegarde…</button>' +
@@ -1370,7 +1446,44 @@ html.night .type-btn.is-active { color: #0B1024; }
       '</div>';
     document.body.appendChild(ov); appInert(true);
     requestAnimationFrame(function () { ov.classList.add('open'); });
-    function close() { ov.classList.remove('open'); document.removeEventListener('keydown', onKey); appInert(false); restoreFocus(opener); setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 200); }
+
+    function renderSync() {
+      var sec = ov.querySelector('[data-syncsec]'); if (!sec) return;
+      var on = CarnetSync.isOn(); var st = CarnetSync.status();
+      var labels = { off: 'Désactivée', idle: 'En attente…', syncing: 'Synchronisation…', ok: 'À jour', error: (st.msg || 'Erreur') };
+      var stLabel = labels[st.state] || '';
+      var dot = st.state === 'ok' ? 'var(--succes)' : (st.state === 'error' ? 'var(--danger)' : (st.state === 'syncing' ? 'var(--or-fonce)' : 'var(--ink3)'));
+      var html = '<div style="font-family:\'Fraunces\',Georgia,serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:4px;">Synchro iPad ↔ téléphone</div>' +
+        '<div style="font-size:12.5px;font-weight:500;line-height:1.55;color:var(--ink2);margin-bottom:12px;">La même <b>phrase secrète</b> sur tes deux appareils, et tout se synchronise seul. Tes données sont chiffrées avant l\'envoi — le serveur ne peut pas les lire. Choisis une phrase longue, connue de toi seul.</div>';
+      if (on) {
+        html += '<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:12px;"><span style="width:9px;height:9px;border-radius:50%;background:' + dot + ';flex:none;"></span>Synchro active — ' + escapeHtml(stLabel) + '</div>' +
+          '<div style="display:flex;gap:10px;flex-wrap:wrap;"><button type="button" class="btn btn--primary" data-syncnow style="flex:1;min-width:150px;">Synchroniser maintenant</button>' +
+          '<button type="button" class="btn btn--ghost" data-syncoff style="flex:none;">Désactiver ici</button></div>';
+      } else {
+        html += '<input type="password" data-syncphrase autocomplete="off" inputmode="text" placeholder="Phrase secrète (6 caractères min.)" style="width:100%;height:44px;padding:0 14px;border:1px solid var(--filet);border-radius:10px;background:var(--creme);font-family:inherit;font-size:14px;color:var(--ink);margin-bottom:10px;">' +
+          '<button type="button" class="btn btn--primary" data-syncon style="width:100%;">Activer la synchro</button>' +
+          '<div data-syncmsg style="display:none;margin-top:8px;font-size:12px;font-weight:600;"></div>';
+      }
+      sec.innerHTML = html;
+      var bOn = sec.querySelector('[data-syncon]');
+      if (bOn) bOn.addEventListener('click', function () {
+        var inp = sec.querySelector('[data-syncphrase]'); var m = sec.querySelector('[data-syncmsg]');
+        bOn.disabled = true; bOn.textContent = 'Activation…';
+        CarnetSync.enable(inp.value).then(function () { renderSync(); }, function (err) {
+          bOn.disabled = false; bOn.textContent = 'Activer la synchro';
+          m.textContent = (err && err.message) || 'Échec'; m.style.color = 'var(--danger)'; m.style.display = 'block';
+        });
+      });
+      var bNow = sec.querySelector('[data-syncnow]');
+      if (bNow) bNow.addEventListener('click', function () { bNow.disabled = true; bNow.textContent = 'Synchronisation…'; CarnetSync.syncNow().then(function () { renderSync(); }); });
+      var bOff = sec.querySelector('[data-syncoff]');
+      if (bOff) bOff.addEventListener('click', function () { CarnetSync.disable(); renderSync(); });
+    }
+    function onSyncStatus() { renderSync(); }
+    window.addEventListener('carnet:sync-status', onSyncStatus);
+    renderSync();
+
+    function close() { ov.classList.remove('open'); document.removeEventListener('keydown', onKey); window.removeEventListener('carnet:sync-status', onSyncStatus); appInert(false); restoreFocus(opener); setTimeout(function () { if (ov.parentNode) ov.parentNode.removeChild(ov); }, 200); }
     function onKey(e) { if (e.key === 'Escape') close(); }
     function msg(txt, ok) { var m = ov.querySelector('[data-msg]'); m.textContent = txt; m.style.color = ok ? 'var(--succes)' : 'var(--danger)'; m.style.display = 'block'; }
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
@@ -1466,6 +1579,119 @@ html.night .type-btn.is-active { color: #0B1024; }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
   /* ── API publique ── */
+  /* ══════════════════════════════════════════════════════════════════
+     Synchronisation privée (iPad ↔ téléphone)
+     Coffre chiffré sur le Cloudflare de l'utilisateur — indépendant de
+     Netrix. La phrase secrète reste sur l'appareil : elle dérive à la fois
+     l'identifiant du coffre (SHA-256) et la clé de chiffrement (PBKDF2 →
+     AES-GCM). Le serveur ne voit que du texte chiffré.
+     ══════════════════════════════════════════════════════════════════ */
+  var SYNC_ENDPOINT = 'https://carnet-sync.elchrist-nettoyage.workers.dev';
+  var PHRASE_KEY = 'carnet.sync.phrase';
+  var _phrase = '', _key = null, _bucket = null, _busy = false, _again = false;
+  var _pushTimer = null, _pollTimer = null, _lastDocStr = null;
+  var lastStatus = { state: 'off', msg: '', at: 0 };
+
+  function te(s) { return new TextEncoder().encode(s); }
+  function b64(u8) { var s = ''; for (var i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s); }
+  function ub64(str) { var s = atob(str); var u = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+  function hasCrypto() { return typeof crypto !== 'undefined' && crypto.subtle; }
+
+  function sha256hex(str) {
+    return crypto.subtle.digest('SHA-256', te(str)).then(function (h) {
+      var u = new Uint8Array(h), out = '';
+      for (var i = 0; i < u.length; i++) out += u[i].toString(16).padStart(2, '0');
+      return out;
+    });
+  }
+  function deriveKey(phrase) {
+    return crypto.subtle.importKey('raw', te(phrase), 'PBKDF2', false, ['deriveKey']).then(function (kb) {
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: te('carnet-sync-v1'), iterations: 150000, hash: 'SHA-256' },
+        kb, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function encDoc(obj) {
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, _key, te(JSON.stringify(obj))).then(function (ct) {
+      return b64(iv) + ':' + b64(new Uint8Array(ct));
+    });
+  }
+  function decDoc(blob) {
+    var parts = blob.split(':'); if (parts.length !== 2) return Promise.reject(new Error('format'));
+    return crypto.subtle.decrypt({ name: 'AES-GCM', iv: ub64(parts[0]) }, _key, ub64(parts[1])).then(function (pt) {
+      return JSON.parse(new TextDecoder().decode(pt));
+    });
+  }
+  function ensureKey() {
+    if (_key && _bucket) return Promise.resolve();
+    return sha256hex('carnet-sync-bucket:' + _phrase).then(function (b) { _bucket = b; return deriveKey(_phrase); }).then(function (k) { _key = k; });
+  }
+  function setStatus(state, msg) { lastStatus = { state: state, msg: msg || '', at: Date.now() }; try { window.dispatchEvent(new CustomEvent('carnet:sync-status', { detail: lastStatus })); } catch (e) {} }
+
+  function pushRaw() {
+    var doc = store.exportDoc();
+    var str = JSON.stringify(doc);
+    if (str === _lastDocStr) return Promise.resolve(false);
+    return encDoc(doc).then(function (blob) {
+      return fetch(SYNC_ENDPOINT + '/data?k=' + _bucket, { method: 'PUT', body: blob, headers: { 'Content-Type': 'text/plain' } });
+    }).then(function (res) { if (res && res.ok) { _lastDocStr = str; return true; } throw new Error('PUT ' + (res && res.status)); });
+  }
+
+  function syncNow() {
+    if (!_phrase) return Promise.resolve();
+    if (!hasCrypto()) { setStatus('error', 'Chiffrement indisponible sur ce navigateur.'); return Promise.resolve(); }
+    if (_busy) { _again = true; return Promise.resolve(); }
+    _busy = true; setStatus('syncing');
+    return ensureKey()
+      .then(function () { return fetch(SYNC_ENDPOINT + '/data?k=' + _bucket, { method: 'GET' }); })
+      .then(function (res) { return res.ok ? res.text() : ''; })
+      .then(function (body) {
+        body = (body || '').trim();
+        if (!body) return;
+        return decDoc(body).then(function (remote) { store.mergeRemote(remote); }, function () { /* blob illisible : on ignore, le push corrigera */ });
+      })
+      .then(function () { return pushRaw(); })
+      .then(function () { setStatus('ok'); })
+      .catch(function () { setStatus('error', 'Synchro impossible (réseau ?)'); })
+      .then(function () {
+        _busy = false;
+        if (_again) { _again = false; return syncNow(); }
+      });
+  }
+
+  function startPolling() { stopPolling(); _pollTimer = setInterval(function () { if (_phrase && !document.hidden) syncNow(); }, 45000); }
+  function stopPolling() { if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; } }
+
+  // Écritures locales → push différé (regroupe les frappes).
+  window.addEventListener('carnet:local-write', function () {
+    if (!_phrase) return;
+    clearTimeout(_pushTimer);
+    _pushTimer = setTimeout(function () { syncNow(); }, 1500);
+  });
+  // Retour sur l'appli → on tire les changements de l'autre appareil.
+  window.addEventListener('focus', function () { if (_phrase) syncNow(); });
+  document.addEventListener('visibilitychange', function () { if (_phrase && !document.hidden) syncNow(); });
+
+  var CarnetSync = {
+    isOn: function () { return !!_phrase; },
+    status: function () { return lastStatus; },
+    enable: function (phrase) {
+      phrase = (phrase || '').trim();
+      if (phrase.length < 6) return Promise.reject(new Error('Phrase trop courte (6 caractères minimum).'));
+      if (!hasCrypto()) return Promise.reject(new Error('Ce navigateur ne permet pas le chiffrement (page non sécurisée ?).'));
+      _phrase = phrase; lsSet(PHRASE_KEY, phrase); _key = null; _bucket = null; _lastDocStr = null;
+      startPolling();
+      return syncNow();
+    },
+    disable: function () { _phrase = ''; try { localStorage.removeItem(PHRASE_KEY); } catch (e) {} _key = null; _bucket = null; stopPolling(); setStatus('off'); },
+    syncNow: function () { return syncNow(); }
+  };
+
+  // Reprise au chargement si la synchro était déjà activée sur cet appareil.
+  _phrase = lsGet(PHRASE_KEY) || '';
+  if (_phrase) { setStatus('idle'); startPolling(); setTimeout(function () { syncNow(); }, 400); }
+
   window.Carnet = {
     store: store,
     toast: toast, confirm: confirmModal,
@@ -1473,6 +1699,7 @@ html.night .type-btn.is-active { color: #0B1024; }
     isNight: isNight, toggleNight: toggleNight, applyTheme: applyTheme,
     openPlanifier: openPlanifier,
     reglages: reglagesModal,
+    sync: CarnetSync,
     today: today, ymd: ymd, frLong: frLong, cap: cap
   };
 })();
