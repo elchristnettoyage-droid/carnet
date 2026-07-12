@@ -357,6 +357,21 @@ html.night .chip.is-active-marine { color: #0B1024; }
 .rep-empty { font-size: 13px; font-style: italic; color: var(--ink3); padding: 8px 2px; }
 @media (max-width: 1080px) { .repertoire { grid-template-columns: 1fr; gap: 18px; } .rep-cat { min-height: 240px; } }
 
+/* ═══ Bouton flottant « Planifier » + rouage mobile (masqués sur grand écran) ═══ */
+.fab {
+  position: fixed; right: 16px; z-index: 46; width: 56px; height: 56px; border-radius: 50%;
+  background: #162244; color: #D4A574; border: none; cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 10px 28px rgba(15, 26, 53, 0.4);
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+.topbar-gear {
+  display: none; flex: none; align-items: center; justify-content: center; width: 40px; height: 40px;
+  background: transparent; border: 1px solid var(--filet); border-radius: 10px; color: var(--ink); cursor: pointer;
+}
+.topbar-gear:hover { background: var(--creme); }
+
+
 /* Registres (écran Tâches) */
 .registers { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-top: 20px; }
 .register { display: flex; flex-direction: column; min-height: 0; }
@@ -584,12 +599,78 @@ html.night .type-btn.is-active { color: #0B1024; }
   .week { grid-template-columns: repeat(7, minmax(150px, 1fr)); overflow-x: auto; }
 }
 
+/* ═══ Téléphone ═══ */
+@media (max-width: 640px) {
+  .app { flex-direction: column; height: 100dvh; }
+
+  /* Le rail devient une barre d'onglets fixée en bas */
+  .rail {
+    width: 100%; height: auto; flex-direction: row; order: 3; flex: none;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 45;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.22);
+  }
+  .rail-brand, .rail-plan, .rail-spacer, .rail-night, .rail [data-open-reglages] { display: none; }
+  .rail-nav { flex-direction: row; flex: 1; gap: 0; }
+  .rail-item {
+    flex: 1; flex-direction: column; height: auto; gap: 3px; padding: 7px 2px 5px;
+    border-radius: 10px; text-align: center; color: var(--rail-txt);
+    font-size: 9px; font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden;
+  }
+  .rail-item svg { width: 22px; height: 22px; }
+  .rail-item.is-active .active-bar { display: none; }
+  .rail-item:hover { background: transparent; color: var(--rail-txt); }
+  .rail-item.is-active { background: transparent; color: var(--or); font-weight: 800; }
+  .rail-item.is-active svg { stroke: #D4A574; }
+
+  .main-col { order: 1; min-height: 0; }
+
+  /* Barre supérieure compacte */
+  .topbar { height: 54px; padding: 0 12px; gap: 8px; }
+  .topbar .date { display: none; }
+  .search-wrap { flex: 1 1 auto; min-width: 0; }
+  .search { width: 100%; }
+  #searchResults { position: fixed; left: 8px; right: 8px; top: 58px; max-height: 72vh; }
+  .topbar-gear { display: inline-flex; }
+
+  /* Contenu : la page défile en entier, espace pour la barre du bas */
+  .content { padding: 14px 14px calc(84px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .page-title.big { font-size: 30px; }
+  .page-title.mid { font-size: 25px; }
+  .page-sub { font-size: 13px; }
+
+  /* Grilles → une seule colonne, flux naturel (plus de scroll interne) */
+  .registers, .repertoire { display: block; }
+  .register, .rep-cat { min-height: auto; margin-bottom: 22px; }
+  .register-body, .rep-body { overflow: visible; }
+  .register-add { position: relative; }
+  .jour-grid { display: block; overflow-y: visible; }
+  .jour-fil, .jour-aside { overflow: visible; }
+  .jour-aside { border-top: 1px solid var(--filet); padding-top: 18px; margin-top: 6px; }
+
+  /* Semaine : reste en défilement horizontal (colonnes lisibles) */
+  .week { grid-template-columns: repeat(7, minmax(150px, 1fr)); }
+
+  /* En-tête éditorial de Ma journée : météo passe sous le titre */
+  .content > div[style*="align-items:flex-end"] { flex-wrap: wrap; gap: 8px; }
+
+  /* Modales pleine largeur, volet Planifier confortable */
+  .modal { width: calc(100vw - 24px) !important; max-height: calc(100dvh - 90px); }
+  .plan-grid4 { grid-template-columns: repeat(2, 1fr); }
+
+  /* Bouton flottant visible */
+  .fab { display: flex; }
+
+  /* Barre d'actions semaine : compacte */
+  .week-nav .chip { padding: 0 12px; }
+}
+
 
 /* ── Assemblage écran unique (SPA) ── */
 [data-route]{display:none;}
 [data-route].is-shown{display:flex;}
 .rail-item .active-bar{display:none;}
-.rail-item.is-active .active-bar{display:block;}
+@media (min-width:641px){.rail-item.is-active .active-bar{display:block;}}
 .rail-item.is-active svg{stroke:#D4A574;}
 
 </style>
@@ -630,6 +711,7 @@ html.night .type-btn.is-active { color: #0B1024; }
   <div class="date" data-today-long>jeudi 9 juillet 2026</div><span class="grow"></span>
   <div class="search-wrap"><div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
     <input id="searchInput" type="text" placeholder="Rechercher…" aria-label="Rechercher" autocomplete="off"></div><div id="searchResults"></div></div>
+  <button class="topbar-gear" type="button" data-open-reglages aria-label="Réglages & sauvegarde"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
   <button class="bell" type="button" aria-label="Rappels — 2 en attente"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span class="count">2</span></button>
 </header>
 <main class="content" data-route="journee" style="padding-bottom:0;">
@@ -780,6 +862,7 @@ html.night .type-btn.is-active { color: #0B1024; }
         </section>
       </div>
     </main>
+<button class="fab" type="button" data-open-planifier aria-label="Planifier"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
 </div></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <script>
@@ -1271,6 +1354,10 @@ html.night .type-btn.is-active { color: #0B1024; }
       '<div class="modal-head"><h1 class="modal-title sm">Réglages & sauvegarde</h1><span class="grow"></span>' +
         '<button type="button" class="modal-close" data-close aria-label="Fermer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>' +
       '<div style="margin-top:6px;font-size:13px;font-weight:500;line-height:1.5;color:var(--ink2);">Ton carnet est stocké sur cet appareil. Exporte régulièrement une sauvegarde pour ne rien perdre (et la réimporter sur un autre appareil).</div>' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 0;border-bottom:1px solid var(--filet);">' +
+        '<span style="flex:1;font-size:13.5px;font-weight:600;color:var(--ink);">Mode nuit — après les heures</span>' +
+        '<button type="button" class="btn btn--ghost" data-night style="height:40px;">' + (isNight() ? 'Revenir au jour' : 'Activer') + '</button>' +
+      '</div>' +
       '<div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;">' +
         '<button type="button" class="btn btn--primary" data-export style="width:100%;">Exporter une sauvegarde</button>' +
         '<button type="button" class="btn btn--ghost" data-importbtn style="width:100%;">Importer une sauvegarde…</button>' +
@@ -1289,6 +1376,7 @@ html.night .type-btn.is-active { color: #0B1024; }
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
     ov.querySelector('[data-close]').addEventListener('click', close);
     ov.querySelector('[data-close2]').addEventListener('click', close);
+    ov.querySelector('[data-night]').addEventListener('click', function () { toggleNight(); this.textContent = isNight() ? 'Revenir au jour' : 'Activer'; });
     ov.querySelector('[data-export]').addEventListener('click', function () { doExport(); msg('Sauvegarde téléchargée.', true); });
     var fileInput = ov.querySelector('[data-importfile]');
     ov.querySelector('[data-importbtn]').addEventListener('click', function () { fileInput.click(); });
